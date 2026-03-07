@@ -20,7 +20,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
 
     public void addAdmin(AddAdminRequestDTO request) {
-        Optional<User> checkUser = userRepository.findByUsername(request.getUsername());
+        Optional<User> checkUser = userRepository.findByUsernameAndDeletedAtIsNull(request.getUsername());
 
         if(checkUser.isPresent()){
             throw new BusinessException("Username sudah terdaftar");
@@ -32,8 +32,8 @@ public class UserService {
         user.setPassword(encoder.encode(request.getPassword()));
         user.setRole(Role.ADMIN);
 
-        Integer is_active = request.getIs_active() == null ? 1 : request.getIs_active();
-        user.setIs_active(is_active);
+        Integer is_active = request.getIsActive() == null ? 1 : request.getIsActive();
+        user.setIsActive(is_active);
         userRepository.save(user);
     }
 

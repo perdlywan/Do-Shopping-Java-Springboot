@@ -1,5 +1,6 @@
 package com.example.do_shopping.dto.request;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -15,5 +16,5 @@ public class AddAdminRequestDTO {
     @NotBlank
     private String password;
 
-    private Integer is_active = 1;
+    private Integer isActive = 1;
 }

@@ -31,25 +31,24 @@ public class Customer {
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @CreatedBy
     @Column(name = "created_by", updatable = false)
-    private String created_by;
+    private String createdBy;
 
     @LastModifiedDate
     @Column(name = "updated_at")
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
     @LastModifiedBy
     @Column(name = "updated_by")
-    private String updated_by;
+    private String updatedBy;
 
     @Column(name = "deleted_at")
-    private LocalDateTime deleted_at;
+    private LocalDateTime deletedAt;
 
-    @LastModifiedBy
     @Column(name = "deleted_by")
-    private String deleted_by;
+    private String deletedBy;
 
 }

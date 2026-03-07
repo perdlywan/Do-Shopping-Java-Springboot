@@ -1,0 +1,17 @@
+CREATE TABLE payments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  order_id INT NOT NULL,
+  method_type ENUM('TRANSFER_BANK','E_WALLET','VIRTUAL_ACCOUNT','COD'),
+  provider_name VARCHAR(100),
+  amount DECIMAL(18,2) NOT NULL,
+  payment_expired_at DATETIME,
+  status ENUM('PENDING','PAID','FAILED','EXPIRED','CANCELLED') NOT NULL,
+  paid_at DATETIME,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  created_by VARCHAR(50) NOT NULL,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_by VARCHAR(50) NOT NULL,
+  deleted_at DATETIME,
+  deleted_by VARCHAR(50),
+  FOREIGN KEY (order_id) REFERENCES orders(id)
+);

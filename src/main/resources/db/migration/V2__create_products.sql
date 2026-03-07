@@ -1,0 +1,15 @@
+CREATE TABLE products (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  category_id INT NOT NULL,
+  name VARCHAR(50) NOT NULL,
+  price DECIMAL(18,2) NOT NULL,
+  stock INT DEFAULT 0,
+  description TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  created_by VARCHAR(50) NOT NULL,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_by VARCHAR(50) NOT NULL,
+  deleted_at DATETIME,
+  deleted_by VARCHAR(50),
+  FOREIGN KEY (category_id) REFERENCES categories(id)
+);

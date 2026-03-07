@@ -1,0 +1,20 @@
+CREATE TABLE shippings (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  order_id INT NOT NULL,
+  shipping_address_id INT NOT NULL,
+  courier_name VARCHAR(100),
+  service_type VARCHAR(100),
+  tracking_number VARCHAR(100),
+  shipping_cost DECIMAL(18,2),
+  status ENUM('PENDING','PACKED','SHIPPED','DELIVERED','CANCELLED'),
+  shipped_at DATETIME,
+  delivered_at DATETIME,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  created_by VARCHAR(50) NOT NULL,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_by VARCHAR(50) NOT NULL,
+  deleted_at DATETIME,
+  deleted_by VARCHAR(50),
+  FOREIGN KEY (order_id) REFERENCES orders(id),
+  FOREIGN KEY (shipping_address_id) REFERENCES shipping_addresses(id)
+);

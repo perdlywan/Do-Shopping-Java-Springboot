@@ -1,4 +1,4 @@
-package com.example.do_shopping.dto.request;
+package com.example.do_shopping.dto.request.customer;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

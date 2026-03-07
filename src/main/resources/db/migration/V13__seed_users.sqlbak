@@ -1,0 +1,125 @@
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(1, NULL, 'admin', '$2a$10$iSB8nPP9g2jyfmrTcv4bNupcp9K6Rd.kOmDe.2J16mJW0zSxRb7dS', 'ADMIN', 1, '2026-03-07 17:46:21', 'SYSTEM', '2026-03-07 17:46:21', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(2, 'andi@mail.com', 'andi', '$2a$10$XE05MC9EGRBvLx5nm65RNO/l8G93qikMHBAua/zPyPUEAp38diH2G', 'CUSTOMER', 1, '2026-03-07 17:46:46', 'SYSTEM', '2026-03-07 17:46:46', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(3, 'budi@mail.com', 'budi', '$2a$10$VeceTo/TmMzPx4XNWmb9zeeEdgcfoYUIw7BEldP.mObEhPPuYh.gO', 'CUSTOMER', 1, '2026-03-07 17:46:58', 'SYSTEM', '2026-03-07 17:46:58', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(4, 'rina@mail.com', 'rina', '$2a$10$fDwr5WgD3.VJDgmY6rAcg.HTLxbADuUQ3NloeXtQaXlRLlw9din8O', 'CUSTOMER', 1, '2026-03-07 17:47:05', 'SYSTEM', '2026-03-07 17:47:05', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(5, 'dewi@mail.com', 'dewi', '$2a$10$zih2SRw8xgCRjvARkJfWNOoUBE25rfCaHYxOisl3Ke6Eev4XB15ie', 'CUSTOMER', 1, '2026-03-07 17:47:13', 'SYSTEM', '2026-03-07 17:47:13', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(6, 'fajar@mail.com', 'fajar', '$2a$10$T6Q3OzU0FBjBYENB2GRRwebqCcQGuTrKKH90WY/wVC1Qz8QhaTCBS', 'CUSTOMER', 1, '2026-03-07 17:47:20', 'SYSTEM', '2026-03-07 17:47:20', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(7, 'hendra@mail.com', 'hendra', '$2a$10$6FiUdU4A4Fpnft52AkbBi.LGh/nwNoMLD5IVyOdiWGkoizqYVKZjy', 'CUSTOMER', 1, '2026-03-07 17:47:54', 'SYSTEM', '2026-03-07 17:47:54', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(8, 'siti@mail.com', 'siti', '$2a$10$BqNLQvnpwEmrIU0tLU0f2.lkr5G396asssIu.JGpo7LByNsR8uixy', 'CUSTOMER', 1, '2026-03-07 17:48:11', 'SYSTEM', '2026-03-07 17:48:11', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(9, 'rudi@mail.com', 'rudi', '$2a$10$GFY0/UV7c6LOxcxiuZV/K.tOGuDq8n4b6TrQOfMKBPdWCj7lfu1WO', 'CUSTOMER', 1, '2026-03-07 17:48:45', 'SYSTEM', '2026-03-07 17:48:45', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(10, 'ahmad@mail.com', 'ahmad', '$2a$10$kiQMpKpMGMqRMD9ZCt4nTuE46PGZhwzyeoG6Vk9GMrFtH4otz/GFW', 'CUSTOMER', 1, '2026-03-07 17:48:53', 'SYSTEM', '2026-03-07 17:48:53', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(11, 'taufik@mail.com', 'taufik', '$2a$10$Zr6WI2UNIRw72XkaKYTU1ONgEK6G6YDROk1fTsnEWP2xyy2oVfyQW', 'CUSTOMER', 1, '2026-03-07 17:49:02', 'SYSTEM', '2026-03-07 17:49:02', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(12, 'dian@mail.com', 'dian', '$2a$10$kyDPXs2bNQXMBeDTZXMZZ.HZ3zurIzfc270RckTm0YKtY3aqHukFm', 'CUSTOMER', 1, '2026-03-07 17:49:09', 'SYSTEM', '2026-03-07 17:49:09', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(13, 'farhan@mail.com', 'farhan', '$2a$10$Tvq7XizWEQZ3qp7ypGQdRej9wGZTtJyAuKF2hEtR4bz2Hxfa9FkQu', 'CUSTOMER', 1, '2026-03-07 17:49:18', 'SYSTEM', '2026-03-07 17:49:18', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(14, 'nina@mail.com', 'nina', '$2a$10$AwNBJOKTos9iMrPd392bFezqTos/.5Hy0dXka5fHAnucCeopaxcjG', 'CUSTOMER', 1, '2026-03-07 17:51:51', 'SYSTEM', '2026-03-07 17:51:51', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(15, 'agung@mail.com', 'agung', '$2a$10$cPgurXuZFKzcsqZDaY972e9QS7BtyMwNJo5Gk.UxYBtX1eY.kRaqG', 'CUSTOMER', 1, '2026-03-07 17:51:58', 'SYSTEM', '2026-03-07 17:51:58', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(16, 'putri@mail.com', 'putri', '$2a$10$d4DQf4l4lzPl.mAbU1qeYOSLIGsAC.jaF5//3BGUV2.1yqkCC93Ue', 'CUSTOMER', 1, '2026-03-07 17:52:04', 'SYSTEM', '2026-03-07 17:52:04', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(17, 'yusuf@mail.com', 'yusuf', '$2a$10$EqZWdLcPY/FSGUWt3EouyuP3c6QTgAixqJ0zGPTEQJRwxKZm8oYfS', 'CUSTOMER', 1, '2026-03-07 17:52:14', 'SYSTEM', '2026-03-07 17:52:14', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(18, 'amelia@mail.com', 'amelia', '$2a$10$4YaEwt92Re4ULoNAyVcE1eEQuJdIXS/ylUlIqT3Co98rQkjxfrNe2', 'CUSTOMER', 1, '2026-03-07 17:52:21', 'SYSTEM', '2026-03-07 17:52:21', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(19, 'reza@mail.com', 'reza', '$2a$10$.Liyvz0lExnrIr3PgJGwL.pknRsGqgx0ZBg6elwm8PdL6IW361o3i', 'CUSTOMER', 1, '2026-03-07 17:52:28', 'SYSTEM', '2026-03-07 17:52:28', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(20, 'dimas@mail.com', 'dimas', '$2a$10$HGqZe1EtBKSJKlZUOEobFu1FOya9uIK9OLzpKzYKNhaHv9CBc/UCu', 'CUSTOMER', 1, '2026-03-07 17:52:34', 'SYSTEM', '2026-03-07 17:52:34', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.users
+(id, email, username, password, `role`, is_active, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(21, 'ratna@mail.com', 'ratna', '$2a$10$xLJgF3XkZ.AFdUsGKSG0pOpvs9XwRqJgPv/Smjlr/phOvZdEreQjW', 'CUSTOMER', 1, '2026-03-07 17:52:41', 'SYSTEM', '2026-03-07 17:52:41', 'SYSTEM', NULL, NULL);
+
+
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(1, 2, 'Andi Saputra', '081234567891', '2026-03-07 17:46:46', 'SYSTEM', '2026-03-07 17:46:46', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(2, 3, 'Budi Santoso', '081234567892', '2026-03-07 17:46:58', 'SYSTEM', '2026-03-07 17:46:58', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(3, 4, 'Rina Maharani', '081234567893', '2026-03-07 17:47:05', 'SYSTEM', '2026-03-07 17:47:05', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(4, 5, 'Dewi Lestari', '081234567894', '2026-03-07 17:47:13', 'SYSTEM', '2026-03-07 17:47:13', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(5, 6, 'Fajar Nugroho', '081234567895', '2026-03-07 17:47:20', 'SYSTEM', '2026-03-07 17:47:20', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(6, 7, 'Hendra Wijaya', '081234567896', '2026-03-07 17:47:54', 'SYSTEM', '2026-03-07 17:47:54', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(7, 8, 'Siti Aisyah', '081234567897', '2026-03-07 17:48:11', 'SYSTEM', '2026-03-07 17:48:11', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(8, 9, 'Rudi Hartono', '081234567898', '2026-03-07 17:48:45', 'SYSTEM', '2026-03-07 17:48:45', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(9, 10, 'Ahmad Hidayat', '081234567899', '2026-03-07 17:48:53', 'SYSTEM', '2026-03-07 17:48:53', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(10, 11, 'Taufik Akbar', '081234567900', '2026-03-07 17:49:02', 'SYSTEM', '2026-03-07 17:49:02', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(11, 12, 'Dian Pratama', '081234567901', '2026-03-07 17:49:09', 'SYSTEM', '2026-03-07 17:49:09', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(12, 13, 'Farhan Maulana', '081234567902', '2026-03-07 17:49:18', 'SYSTEM', '2026-03-07 17:49:18', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(13, 14, 'Nina Amelia', '081234567903', '2026-03-07 17:51:51', 'SYSTEM', '2026-03-07 17:51:51', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(14, 15, 'Agung Prakoso', '081234567904', '2026-03-07 17:51:58', 'SYSTEM', '2026-03-07 17:51:58', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(15, 16, 'Putri Lestari', '081234567905', '2026-03-07 17:52:04', 'SYSTEM', '2026-03-07 17:52:04', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(16, 17, 'Yusuf Ramadhan', '081234567906', '2026-03-07 17:52:14', 'SYSTEM', '2026-03-07 17:52:14', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(17, 18, 'Amelia Putri', '081234567907', '2026-03-07 17:52:21', 'SYSTEM', '2026-03-07 17:52:21', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(18, 19, 'Reza Saputra', '081234567908', '2026-03-07 17:52:28', 'SYSTEM', '2026-03-07 17:52:28', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(19, 20, 'Dimas Setiawan', '081234567909', '2026-03-07 17:52:34', 'SYSTEM', '2026-03-07 17:52:34', 'SYSTEM', NULL, NULL);
+INSERT INTO do_shopping.customers
+(id, user_id, name, phone, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+VALUES(20, 21, 'Ratna Dewi', '081234567910', '2026-03-07 17:52:41', 'SYSTEM', '2026-03-07 17:52:41', 'SYSTEM', NULL, NULL);

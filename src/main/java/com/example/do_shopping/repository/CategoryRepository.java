@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    Optional<Category> findByName(String name);
+    Optional<Category> findByNameAndDeletedAtIsNull(String name);
 
-    @Query("SELECT c FROM Category c WHERE c.deleted_at IS NULL")
+    Optional<Category> findByIdAndDeletedAtIsNull(Long id);
+
+    @Query("SELECT c FROM Category c WHERE c.deletedAt IS NULL")
     List<Category> findAllActive();
 }
