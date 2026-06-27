@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 
 public class ShippingResponseDTO {
-    private Long id;
+    private String id;
     private Object shippingAddress;
     private String courierName;
     private String serviceType;

@@ -1,6 +1,6 @@
 CREATE TABLE payments (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  order_id INT NOT NULL,
+  id CHAR(36) NOT NULL,
+  order_id CHAR(36) NOT NULL,
   method_type ENUM('TRANSFER_BANK','E_WALLET','VIRTUAL_ACCOUNT','COD'),
   provider_name VARCHAR(100),
   amount DECIMAL(18,2) NOT NULL,
@@ -13,5 +13,6 @@ CREATE TABLE payments (
   updated_by VARCHAR(50) NOT NULL,
   deleted_at DATETIME,
   deleted_by VARCHAR(50),
+  PRIMARY KEY (id),
   FOREIGN KEY (order_id) REFERENCES orders(id)
 );

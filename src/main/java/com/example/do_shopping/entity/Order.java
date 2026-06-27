@@ -21,8 +21,8 @@ import java.util.List;
 @Data
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<OrderDetail> orderDetails = new ArrayList<>();

@@ -48,7 +48,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DataResponseDTO> getProductById(@PathVariable("id") Long id){
+    public ResponseEntity<DataResponseDTO> getProductById(@PathVariable("id") String id){
         Product product =  productService.getProductById(id);
 
         ProductResponseDTO productResponseDTO = new ProductResponseDTO(
@@ -91,7 +91,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ActionSuccessResponseDTO> updateProduct(@PathVariable("id") Long id, @Valid @RequestBody UpdateProductRequestDTO request){
+    public ResponseEntity<ActionSuccessResponseDTO> updateProduct(@PathVariable("id") String id, @Valid @RequestBody UpdateProductRequestDTO request){
         Product product =  productService.updateProduct(id, request);
 
         ProductResponseDTO productResponseDTO = new ProductResponseDTO(
@@ -113,7 +113,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ActionSuccessResponseDTO> deleteProduct(@PathVariable("id") Long id){
+    public ResponseEntity<ActionSuccessResponseDTO> deleteProduct(@PathVariable("id") String id){
         Product product =  productService.deleteProduct(id);
 
         ProductResponseDTO productResponseDTO = new ProductResponseDTO(

@@ -1,6 +1,6 @@
 CREATE TABLE orders (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  customer_id INT NOT NULL,
+  id CHAR(36) NOT NULL,
+  customer_id CHAR(36) NOT NULL,
   order_date DATETIME DEFAULT CURRENT_TIMESTAMP,
   total_quantity INT NOT NULL,
   total_amount DECIMAL(18,2) NOT NULL,
@@ -12,5 +12,6 @@ CREATE TABLE orders (
   updated_by VARCHAR(50) NOT NULL,
   deleted_at DATETIME,
   deleted_by VARCHAR(50),
+  PRIMARY KEY (id),
   FOREIGN KEY (customer_id) REFERENCES customers(id)
 );

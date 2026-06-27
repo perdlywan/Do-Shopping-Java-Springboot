@@ -1,6 +1,6 @@
 CREATE TABLE shipping_addresses (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  customer_id INT NOT NULL,
+  id CHAR(36) NOT NULL,
+  customer_id CHAR(36) NOT NULL,
   address TEXT NOT NULL,
   country VARCHAR(100) NOT NULL,
   state VARCHAR(100) NOT NULL,
@@ -13,5 +13,6 @@ CREATE TABLE shipping_addresses (
   updated_by VARCHAR(50) NOT NULL,
   deleted_at DATETIME,
   deleted_by VARCHAR(50),
+  PRIMARY KEY (id),
   FOREIGN KEY (customer_id) REFERENCES customers(id)
 );

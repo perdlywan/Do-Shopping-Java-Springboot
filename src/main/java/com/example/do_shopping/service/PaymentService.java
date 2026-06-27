@@ -29,7 +29,7 @@ public class PaymentService {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @Transactional
-    public Payment doPayment(Long id){
+    public Payment doPayment(String id){
         Customer customer = authService.getCurrentCustomer();
 
         Order order = orderRepository.findByIdAndDeletedAtIsNull(id)
@@ -48,18 +48,6 @@ public class PaymentService {
 
         if(payment.getPaymentExpiredAt().isBefore(LocalDateTime.now())){
             throw new BusinessException("Waktu pembayaran sudah habis");
-        }
-
-        // kurangi stok
-        for(OrderDetail detail : order.getOrderDetails()) {
-            Product product = detail.getProduct();
-
-            if (product.getStock() < detail.getQuantity()) {
-                throw new BusinessException("Stok produk tidak mencukupi");
-            }
-
-            product.setStock(product.getStock() - detail.getQuantity());
-            productRepository.save(product);
         }
 
         order.setStatus(OrderStatus.PAID);

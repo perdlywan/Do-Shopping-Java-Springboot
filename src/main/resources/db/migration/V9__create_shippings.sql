@@ -1,7 +1,7 @@
 CREATE TABLE shippings (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  order_id INT NOT NULL,
-  shipping_address_id INT NOT NULL,
+  id CHAR(36) NOT NULL,
+  order_id CHAR(36) NOT NULL,
+  shipping_address_id CHAR(36) NOT NULL,
   courier_name VARCHAR(100),
   service_type VARCHAR(100),
   tracking_number VARCHAR(100),
@@ -15,6 +15,7 @@ CREATE TABLE shippings (
   updated_by VARCHAR(50) NOT NULL,
   deleted_at DATETIME,
   deleted_by VARCHAR(50),
+  PRIMARY KEY (id),
   FOREIGN KEY (order_id) REFERENCES orders(id),
   FOREIGN KEY (shipping_address_id) REFERENCES shipping_addresses(id)
 );

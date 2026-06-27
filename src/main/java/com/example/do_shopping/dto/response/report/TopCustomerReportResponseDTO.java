@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class TopCustomerReportResponseDTO {
-    private Long id;
+    private String id;
     private String nama;
     private Integer totalOrder;
 }

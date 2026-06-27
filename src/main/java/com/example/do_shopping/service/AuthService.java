@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -47,12 +48,13 @@ public class AuthService {
         user.setRole(Role.CUSTOMER);
         user.setIsActive(1);
 
+        User savedUser = userRepository.save(user);
+
         Customer customer = new Customer();
-        customer.setUser(user);
+        customer.setUser(savedUser);
         customer.setName(request.getName());
         customer.setPhone(request.getPhone());
 
-        userRepository.save(user);
         return customerRepository.save(customer);
     }
 

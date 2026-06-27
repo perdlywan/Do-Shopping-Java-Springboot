@@ -1,6 +1,6 @@
 CREATE TABLE customers (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
+  id CHAR(36) NOT NULL,
+  user_id  CHAR(36) NOT NULL,
   name VARCHAR(255) NOT NULL,
   phone VARCHAR(50) NOT NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -10,5 +10,6 @@ CREATE TABLE customers (
   deleted_at DATETIME,
   deleted_by VARCHAR(50),
   UNIQUE(user_id),
+  PRIMARY KEY (id),
   FOREIGN KEY (user_id) REFERENCES users(id)
 );

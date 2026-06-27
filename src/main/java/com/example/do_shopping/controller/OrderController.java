@@ -117,7 +117,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DataResponseDTO> getOrderById(@PathVariable("id") Long id){
+    public ResponseEntity<DataResponseDTO> getOrderById(@PathVariable("id") String id){
         Order order = orderService.getOrderById(id);
 
         List<OrderDetailResponseDTO> detailsDTO = order.getOrderDetails().stream()
@@ -368,7 +368,7 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ActionSuccessResponseDTO> updateOrder(@PathVariable("id") Long id, @Valid @RequestBody AdminUpdateOrderRequestDTO request){
+    public ResponseEntity<ActionSuccessResponseDTO> updateOrder(@PathVariable("id") String id, @Valid @RequestBody AdminUpdateOrderRequestDTO request){
         Shipping shipping = orderService.updateOrder(id, request);
 
         Order order = shipping.getOrder();
@@ -450,7 +450,7 @@ public class OrderController {
     }
 
     @PutMapping("/cancel/{id}")
-    public ResponseEntity<ActionSuccessResponseDTO> cancelOrder(@PathVariable("id") Long id){
+    public ResponseEntity<ActionSuccessResponseDTO> cancelOrder(@PathVariable("id") String id){
         Shipping shipping = orderService.cancelOrder(id);
 
         Order order = shipping.getOrder();

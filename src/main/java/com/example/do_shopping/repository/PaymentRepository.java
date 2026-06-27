@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface PaymentRepository extends JpaRepository<Payment, Long> {
-    Optional<Payment> findByOrderIdAndPaidAtIsNull(Long id);
+public interface PaymentRepository extends JpaRepository<Payment, String> {
+    Optional<Payment> findByOrderIdAndPaidAtIsNull(String id);
 
-    Optional<Payment> findByOrderIdAndDeletedAtIsNull(Long id);
+    Optional<Payment> findByOrderIdAndDeletedAtIsNull(String id);
 
     List<Payment> findByStatusAndPaymentExpiredAtBefore(
             PaymentStatus status,

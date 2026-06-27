@@ -74,7 +74,7 @@ public class ShippingAddressController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ActionSuccessResponseDTO> updateAddress(@PathVariable("id") Long id, @Valid @RequestBody UpdateShippingAddressRequestDTO request){
+    public ResponseEntity<ActionSuccessResponseDTO> updateAddress(@PathVariable("id") String id, @Valid @RequestBody UpdateShippingAddressRequestDTO request){
         ShippingAddress shippingAddress =  shippingAddressService.updateAddress(id, request);
 
         ShippingAddressResponseDTO shippingAddressResponseDTO = new ShippingAddressResponseDTO(
@@ -98,7 +98,7 @@ public class ShippingAddressController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ActionSuccessResponseDTO> deleteAddress(@PathVariable("id") Long id){
+    public ResponseEntity<ActionSuccessResponseDTO> deleteAddress(@PathVariable("id") String id){
         ShippingAddress shippingAddress =  shippingAddressService.deleteAddress(id);
 
         ShippingAddressResponseDTO shippingAddressResponseDTO = new ShippingAddressResponseDTO(

@@ -9,13 +9,13 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface OrderRepository extends JpaRepository<Order, Long> {
-    Optional<Order> findByIdAndDeletedAtIsNull(Long id);
+public interface OrderRepository extends JpaRepository<Order, String> {
+    Optional<Order> findByIdAndDeletedAtIsNull(String id);
 
     @Query("SELECT o FROM Order o WHERE o.deletedAt IS NULL")
     List<Order> findAllActive();
 
-    List<Order> findByCustomerIdAndDeletedAtIsNull(Long id);
+    List<Order> findByCustomerIdAndDeletedAtIsNull(String id);
 
-    Optional<Order> findByIdAndDeletedAtIsNullAndStatus(Long id, OrderStatus status);
+    Optional<Order> findByIdAndDeletedAtIsNullAndStatus(String id, OrderStatus status);
 }

@@ -17,13 +17,12 @@ import java.time.LocalDateTime;
 @Data
 public class OrderDetail {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
-
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)

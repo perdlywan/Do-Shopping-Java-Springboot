@@ -11,8 +11,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 
 public class OrderDetailResponseDTO {
-    private Long id;
-    private Long productId;
+    private String id;
+    private String productId;
     private String productName;
     private BigDecimal price;
     private Integer quantity;

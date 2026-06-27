@@ -17,7 +17,7 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PutMapping("/{id}")
-    public ResponseEntity<ActionSuccessResponseDTO> doPayment(@PathVariable("id") Long id){
+    public ResponseEntity<ActionSuccessResponseDTO> doPayment(@PathVariable("id") String id){
         Payment payment = paymentService.doPayment(id);
 
         PaymentSuccessResponseDTO paymentResponseDTO = new PaymentSuccessResponseDTO(

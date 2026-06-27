@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 @Data
 public class UpdateProductRequestDTO {
-    private Long categoryId;
+    private String categoryId;
     private String name;
     private BigDecimal price;
     private Integer stock;

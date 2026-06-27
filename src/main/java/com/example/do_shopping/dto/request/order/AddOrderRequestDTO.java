@@ -22,5 +22,5 @@ public class AddOrderRequestDTO {
     private String providerName;
 
     @NotNull(message = "shippingAddressId tidak boleh kosong")
-    private Long shippingAddressId;
+    private String shippingAddressId;
 }

@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @Data
 public class Customer {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @OneToOne
     @JoinColumn(name = "user_id")

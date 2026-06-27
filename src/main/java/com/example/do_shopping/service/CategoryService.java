@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class CategoryService {
             return categoryRepository.findAllActive();
     }
 
-    public Category getCategoryById(Long id){
+    public Category getCategoryById(String id){
         return categoryRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("Kategori tidak ditemukan"));
     }
@@ -46,7 +47,7 @@ public class CategoryService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Category updateCategory(Long id, AddCategoryRequestDTO request){
+    public Category updateCategory(String id, AddCategoryRequestDTO request){
         Category category = categoryRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("Kategori tidak ditemukan"));
 
@@ -62,7 +63,7 @@ public class CategoryService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Category deleteCategory(Long id){
+    public Category deleteCategory(String id){
         Category category = categoryRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("Kategori tidak ditemukan"));
 

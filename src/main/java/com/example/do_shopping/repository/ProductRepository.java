@@ -7,10 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, String> {
     Optional<Product> findByNameAndDeletedAtIsNull(String name);
 
-    Optional<Product> findByIdAndDeletedAtIsNull(Long id);
+    Optional<Product> findByIdAndDeletedAtIsNull(String id);
 
     @Query("SELECT p FROM Product p WHERE p.deletedAt IS NULL")
     List<Product> findAllActive();

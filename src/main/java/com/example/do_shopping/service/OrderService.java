@@ -21,14 +21,13 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
     private final AuthService authService;
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
-    private final CustomerRepository customerRepository;
     private final ShippingAddressRepository shippingAddressRepository;
     private final ProductRepository productRepository;
     private final OrderDetailRepository orderDetailRepository;
@@ -36,24 +35,24 @@ public class OrderService {
     private final PaymentRepository paymentRepository;
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Order> getAllOrders(){
+    public List<Order> getAllOrders() {
         return orderRepository.findAllActive();
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
-    public List<Order> getCustomerOrders(){
-       Customer customer = authService.getCurrentCustomer();
+    public List<Order> getCustomerOrders() {
+        Customer customer = authService.getCurrentCustomer();
 
         return orderRepository.findByCustomerIdAndDeletedAtIsNull(customer.getId());
     }
 
-    public Order getOrderById(Long id){
+    public Order getOrderById(String id) {
         Order order = orderRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("Data order tidak ditemukan"));
 
         Customer customer = authService.getCurrentCustomer();
 
-        if(!customer.getId().equals(order.getCustomer().getId())){
+        if (!customer.getId().equals(order.getCustomer().getId())) {
             throw new BusinessException("Order bukan milik anda");
         }
 
@@ -69,7 +68,8 @@ public class OrderService {
         if (request.getShippingAddressId() == null) {
             address = shippingAddressRepository
                     .findByCustomerIdAndIsDefaultTrueAndDeletedAtIsNull(customer.getId())
-                    .orElseThrow(() -> new DataNotFoundException("Alamat default tidak ditemukan. Silakan pilih alamat atau atur alamat default."));
+                    .orElseThrow(() -> new DataNotFoundException(
+                            "Alamat default tidak ditemukan. Silakan pilih alamat atau atur alamat default."));
         } else {
             address = shippingAddressRepository
                     .findByIdAndDeletedAtIsNull(request.getShippingAddressId())
@@ -97,6 +97,9 @@ public class OrderService {
             if (product.getStock() < itemRequest.getQuantity()) {
                 throw new BusinessException("Stok " + product.getName() + " tidak cukup");
             }
+
+            product.setStock(product.getStock() - itemRequest.getQuantity());
+            productRepository.save(product);
 
             BigDecimal subTotal = product.getPrice().multiply(BigDecimal.valueOf(itemRequest.getQuantity()));
 
@@ -145,11 +148,11 @@ public class OrderService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Shipping updateOrder(Long id, AdminUpdateOrderRequestDTO request){
+    public Shipping updateOrder(String id, AdminUpdateOrderRequestDTO request) {
         Order order = orderRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("Order tidak ditemukan"));
 
-        if(request.getOrderStatus() != null){
+        if (request.getOrderStatus() != null) {
             order.setStatus(request.getOrderStatus());
             orderRepository.save(order);
         }
@@ -186,7 +189,7 @@ public class OrderService {
                 shipping.setShippedAt(LocalDateTime.now());
             }
 
-            if (request.getShippingStatus() == ShippingStatus.DELIVERED && shipping.getDeliveredAt() == null){
+            if (request.getShippingStatus() == ShippingStatus.DELIVERED && shipping.getDeliveredAt() == null) {
                 shipping.setDeliveredAt(LocalDateTime.now());
             }
         }
@@ -204,18 +207,33 @@ public class OrderService {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @Transactional
-    public Shipping cancelOrder(Long id){
+    public Shipping cancelOrder(String id) {
         Customer customer = authService.getCurrentCustomer();
 
         Order order = orderRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("Order tidak ditemukan"));
 
-        if(!customer.getId().equals(order.getCustomer().getId())){
+        if (!customer.getId().equals(order.getCustomer().getId())) {
             throw new AccessDeniedException("Order bukan punya anda");
         }
 
         Order orderPending = orderRepository.findByIdAndDeletedAtIsNullAndStatus(id, OrderStatus.PENDING)
                 .orElseThrow(() -> new BusinessException("Order tidak dapat dicancel"));
+
+        List<OrderDetail> orderDetails = orderDetailRepository.findByOrderIdAndDeletedAtIsNull(orderPending.getId());
+
+        if (orderDetails.isEmpty()) {
+            throw new BusinessException("Detail order tidak ditemukan");
+        }
+
+        for (OrderDetail orderDetailProduct : orderDetails) {
+            productRepository.findByIdAndDeletedAtIsNull(orderDetailProduct.getProduct().getId())
+            .ifPresent(product -> {
+                int updatedStock = product.getStock() + orderDetailProduct.getQuantity();
+                product.setStock(updatedStock);
+                productRepository.save(product);
+            });
+        }
 
         orderPending.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(orderPending);

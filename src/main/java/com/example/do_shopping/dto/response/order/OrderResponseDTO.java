@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 
 public class OrderResponseDTO {
-    private Long id;
-    private Long customerId;
+    private String id;
+    private String customerId;
     private LocalDateTime orderDate;
     private Integer totalQuantity;
     private BigDecimal totalAmount;

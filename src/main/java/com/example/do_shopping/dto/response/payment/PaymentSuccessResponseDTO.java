@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 
 public class PaymentSuccessResponseDTO {
-    private Long id;
-    private Long orderId;
+    private String id;
+    private String orderId;
     private PaymentMethod methodType;
     private String providerName;
     private BigDecimal amount;

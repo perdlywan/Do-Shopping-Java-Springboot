@@ -1,5 +1,5 @@
 CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id CHAR(36) NOT NULL,
   email VARCHAR(100),
   username VARCHAR(50) NOT NULL,
   password TEXT NOT NULL,
@@ -10,5 +10,6 @@ CREATE TABLE users (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   updated_by VARCHAR(50) NOT NULL,
   deleted_at DATETIME,
-  deleted_by VARCHAR(50)
+  deleted_by VARCHAR(50),
+  PRIMARY KEY (id)
 );

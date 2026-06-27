@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -59,7 +60,7 @@ public class ShippingAddressService {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @Transactional
-    public ShippingAddress updateAddress(Long id, UpdateShippingAddressRequestDTO request){
+    public ShippingAddress updateAddress(String id, UpdateShippingAddressRequestDTO request){
         ShippingAddress shippingAddress = shippingAddressRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("shipping_address_id " + id + " tidak ditemukan"));
 
@@ -105,7 +106,7 @@ public class ShippingAddressService {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @Transactional
-    public ShippingAddress deleteAddress(Long id){
+    public ShippingAddress deleteAddress(String id){
         ShippingAddress shippingAddress = shippingAddressRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("shipping_address_id " + id + " tidak ditemukan"));
 

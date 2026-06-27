@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class ProductService {
         return productRepository.findAllActive();
     }
 
-    public Product getProductById(Long id){
+    public Product getProductById(String id){
         return productRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("Produk tidak ditemukan"));
     }
@@ -57,7 +58,7 @@ public class ProductService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Product updateProduct(Long id, UpdateProductRequestDTO request){
+    public Product updateProduct(String id, UpdateProductRequestDTO request){
         Product product = productRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("product_id " + id + " tidak ditemukan"));
 
@@ -96,7 +97,7 @@ public class ProductService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Product deleteProduct(Long id){
+    public Product deleteProduct(String id){
         Product product = productRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("product_id " + id + " tidak ditemukan"));
 

@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Data
 public class AddProductRequestDTO {
     @NotNull(message = "categoryId tidak boleh kosong")
-    private Long categoryId;
+    private String categoryId;
 
     @NotBlank(message = "name tidak boleh kosong")
     private String name;

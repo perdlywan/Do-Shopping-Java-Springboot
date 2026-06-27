@@ -18,8 +18,8 @@ import java.util.List;
 @Data
 public class ShippingAddress {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)

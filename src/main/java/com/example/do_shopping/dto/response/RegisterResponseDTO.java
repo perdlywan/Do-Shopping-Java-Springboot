@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class RegisterResponseDTO {
-    private Long id;
+    private String id;
     private String username;
 }

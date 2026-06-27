@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class ShippingAddressResponseDTO {
-    private Long id;
-    private Long customerId;
+    private String id;
+    private String customerId;
     private String address;
     private String country;
     private String state;

@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface ShippingRepositroy extends JpaRepository<Shipping, Long> {
-    Optional<Shipping> findByOrderIdAndDeletedAtIsNull(Long orderId);
+public interface ShippingRepositroy extends JpaRepository<Shipping, String> {
+    Optional<Shipping> findByOrderIdAndDeletedAtIsNull(String orderId);
 }
