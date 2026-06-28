@@ -5,8 +5,10 @@ import com.example.do_shopping.dto.request.product.AddProductRequestDTO;
 import com.example.do_shopping.dto.request.product.UpdateProductRequestDTO;
 import com.example.do_shopping.dto.response.ActionSuccessResponseDTO;
 import com.example.do_shopping.dto.response.DataResponseDTO;
+import com.example.do_shopping.dto.response.PagedResponseDTO;
 import com.example.do_shopping.dto.response.category.CategoryResponseDTO;
 import com.example.do_shopping.dto.response.product.ProductResponseDTO;
+import org.springframework.data.domain.Page;
 import com.example.do_shopping.entity.Product;
 import com.example.do_shopping.service.ProductService;
 import jakarta.validation.Valid;
@@ -25,10 +27,16 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<DataResponseDTO> getAllProducts(){
-        List<Product> products = productService.getAllProducts();
+    public ResponseEntity<PagedResponseDTO<ProductResponseDTO>> getAllProducts(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection
+    ){
+        int pageIndex = page > 0 ? page - 1 : 0;
+        Page<Product> productsPage = productService.getAllProducts(pageIndex, size, sortBy, sortDirection);
 
-        List<ProductResponseDTO> productResponseDTO = products.stream()
+        List<ProductResponseDTO> productResponseDTO = productsPage.getContent().stream()
                 .map(product -> new ProductResponseDTO (
                         product.getId(),
                         product.getCategory().getId(),
@@ -39,9 +47,14 @@ public class ProductController {
                 ))
                 .collect(Collectors.toList());
 
-        DataResponseDTO response = new DataResponseDTO(
+        PagedResponseDTO<ProductResponseDTO> response = new PagedResponseDTO<>(
                 HttpStatus.OK.value(),
-                productResponseDTO
+                productResponseDTO,
+                productsPage.getNumber() + 1,
+                productsPage.getSize(),
+                productsPage.getTotalElements(),
+                productsPage.getTotalPages(),
+                productsPage.isLast()
         );
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

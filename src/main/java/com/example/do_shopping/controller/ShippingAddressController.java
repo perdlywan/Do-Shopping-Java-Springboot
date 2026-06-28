@@ -3,9 +3,10 @@ package com.example.do_shopping.controller;
 import com.example.do_shopping.dto.request.shippingAddress.AddShippingAddressRequestDTO;
 import com.example.do_shopping.dto.request.shippingAddress.UpdateShippingAddressRequestDTO;
 import com.example.do_shopping.dto.response.ActionSuccessResponseDTO;
-import com.example.do_shopping.dto.response.DataResponseDTO;
+import com.example.do_shopping.dto.response.PagedResponseDTO;
 import com.example.do_shopping.dto.response.product.ProductResponseDTO;
 import com.example.do_shopping.dto.response.shippingAddress.ShippingAddressResponseDTO;
+import org.springframework.data.domain.Page;
 import com.example.do_shopping.entity.Product;
 import com.example.do_shopping.entity.ShippingAddress;
 import com.example.do_shopping.service.ShippingAddressService;
@@ -25,10 +26,16 @@ public class ShippingAddressController {
     private final ShippingAddressService shippingAddressService;
 
     @GetMapping
-    public ResponseEntity<DataResponseDTO> getMyAddress(){
-        List<ShippingAddress> shippingAddresses =  shippingAddressService.getMyShippingAddresses();
+    public ResponseEntity<PagedResponseDTO<ShippingAddressResponseDTO>> getMyAddress(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection
+    ){
+        int pageIndex = page > 0 ? page - 1 : 0;
+        Page<ShippingAddress> shippingAddressPage =  shippingAddressService.getMyShippingAddresses(pageIndex, size, sortBy, sortDirection);
 
-        List<ShippingAddressResponseDTO> shippingAddressResponseDTO = shippingAddresses.stream()
+        List<ShippingAddressResponseDTO> shippingAddressResponseDTO = shippingAddressPage.getContent().stream()
                 .map(shippingAddress -> new ShippingAddressResponseDTO (
                         shippingAddress.getId(),
                         shippingAddress.getCustomer().getId(),
@@ -41,9 +48,14 @@ public class ShippingAddressController {
                 ))
                 .collect(Collectors.toList());
 
-        DataResponseDTO response = new DataResponseDTO(
+        PagedResponseDTO<ShippingAddressResponseDTO> response = new PagedResponseDTO<>(
                 HttpStatus.OK.value(),
-                shippingAddressResponseDTO
+                shippingAddressResponseDTO,
+                shippingAddressPage.getNumber() + 1,
+                shippingAddressPage.getSize(),
+                shippingAddressPage.getTotalElements(),
+                shippingAddressPage.getTotalPages(),
+                shippingAddressPage.isLast()
         );
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

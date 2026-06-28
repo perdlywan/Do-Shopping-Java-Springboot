@@ -10,6 +10,8 @@ import com.example.do_shopping.dto.response.order.OrderResponseDTO;
 import com.example.do_shopping.dto.response.payment.PaymentResponseDTO;
 import com.example.do_shopping.dto.response.shipping.ShippingResponseDTO;
 import com.example.do_shopping.dto.response.shippingAddress.ShippingAddressResponseDTO;
+import com.example.do_shopping.dto.response.PagedResponseDTO;
+import org.springframework.data.domain.Page;
 import com.example.do_shopping.entity.Order;
 import com.example.do_shopping.entity.Payment;
 import com.example.do_shopping.entity.Shipping;
@@ -31,10 +33,16 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public ResponseEntity<DataResponseDTO> getOrders(){
-        List<Order> orders =  orderService.getAllOrders();
+    public ResponseEntity<PagedResponseDTO<OrderResponseDTO>> getOrders(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection
+    ){
+        int pageIndex = page > 0 ? page - 1 : 0;
+        Page<Order> ordersPage =  orderService.getAllOrders(pageIndex, size, sortBy, sortDirection);
 
-        List<OrderResponseDTO> orderResponseDTO = orders.stream()
+        List<OrderResponseDTO> orderResponseDTO = ordersPage.getContent().stream()
                 .map(order -> {
                     List<OrderDetailResponseDTO> detailsDTO = order.getOrderDetails().stream()
                             .map(detail -> new OrderDetailResponseDTO(
@@ -108,9 +116,14 @@ public class OrderController {
                 })
                 .collect(Collectors.toList());
 
-        DataResponseDTO response = new DataResponseDTO(
+        PagedResponseDTO<OrderResponseDTO> response = new PagedResponseDTO<>(
                 HttpStatus.OK.value(),
-                orderResponseDTO
+                orderResponseDTO,
+                ordersPage.getNumber() + 1,
+                ordersPage.getSize(),
+                ordersPage.getTotalElements(),
+                ordersPage.getTotalPages(),
+                ordersPage.isLast()
         );
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -199,10 +212,16 @@ public class OrderController {
     }
 
     @GetMapping("/my-orders")
-    public ResponseEntity<DataResponseDTO> getMyOrders(){
-        List<Order> orders = orderService.getCustomerOrders();
+    public ResponseEntity<PagedResponseDTO<OrderResponseDTO>> getMyOrders(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection
+    ){
+        int pageIndex = page > 0 ? page - 1 : 0;
+        Page<Order> ordersPage = orderService.getCustomerOrders(pageIndex, size, sortBy, sortDirection);
 
-        List<OrderResponseDTO> orderResponseDTO = orders.stream()
+        List<OrderResponseDTO> orderResponseDTO = ordersPage.getContent().stream()
                 .map(order -> {
                     List<OrderDetailResponseDTO> detailsDTO = order.getOrderDetails().stream()
                             .map(detail -> new OrderDetailResponseDTO(
@@ -276,9 +295,14 @@ public class OrderController {
                 })
                 .collect(Collectors.toList());
 
-        DataResponseDTO response = new DataResponseDTO(
+        PagedResponseDTO<OrderResponseDTO> response = new PagedResponseDTO<>(
                 HttpStatus.OK.value(),
-                orderResponseDTO
+                orderResponseDTO,
+                ordersPage.getNumber() + 1,
+                ordersPage.getSize(),
+                ordersPage.getTotalElements(),
+                ordersPage.getTotalPages(),
+                ordersPage.isLast()
         );
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

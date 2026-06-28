@@ -6,6 +6,9 @@ import com.example.do_shopping.enums.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -13,9 +16,9 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     Optional<Order> findByIdAndDeletedAtIsNull(String id);
 
     @Query("SELECT o FROM Order o WHERE o.deletedAt IS NULL")
-    List<Order> findAllActive();
+    Page<Order> findAllActive(Pageable pageable);
 
-    List<Order> findByCustomerIdAndDeletedAtIsNull(String id);
+    Page<Order> findByCustomerIdAndDeletedAtIsNull(String id, Pageable pageable);
 
     Optional<Order> findByIdAndDeletedAtIsNullAndStatus(String id, OrderStatus status);
 }

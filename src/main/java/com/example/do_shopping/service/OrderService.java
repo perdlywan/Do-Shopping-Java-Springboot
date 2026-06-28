@@ -18,6 +18,11 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,15 +40,19 @@ public class OrderService {
     private final PaymentRepository paymentRepository;
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Order> getAllOrders() {
-        return orderRepository.findAllActive();
+    public Page<Order> getAllOrders(int pageIndex, int size, String sortBy, String sortDirection) {
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(pageIndex, size, Sort.by(direction, sortBy));
+        return orderRepository.findAllActive(pageable);
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
-    public List<Order> getCustomerOrders() {
+    public Page<Order> getCustomerOrders(int pageIndex, int size, String sortBy, String sortDirection) {
         Customer customer = authService.getCurrentCustomer();
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(pageIndex, size, Sort.by(direction, sortBy));
 
-        return orderRepository.findByCustomerIdAndDeletedAtIsNull(customer.getId());
+        return orderRepository.findByCustomerIdAndDeletedAtIsNull(customer.getId(), pageable);
     }
 
     public Order getOrderById(String id) {
