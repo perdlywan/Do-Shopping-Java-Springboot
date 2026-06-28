@@ -23,10 +23,11 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # Override data source URL dari localhost ke nama container mysql ('mysql')
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/do_shopping?useSSL=false&serverTimezone=Asia/Jakarta&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 1234
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:mysql://mysql:3306/do_shopping?useSSL=false&serverTimezone=Asia/Jakarta&allowPublicKeyRetrieval=true
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-1234}
+      JWT_SECRET: ${JWT_SECRET:-BLA_BLA_BLA_623412123423423askdhajkshdjkhh134h23423238u2384ejfhsdfhsdfhsdlf}
     depends_on:
       - mysql
 
