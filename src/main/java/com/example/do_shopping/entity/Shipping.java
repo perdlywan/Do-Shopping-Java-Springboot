@@ -22,11 +22,11 @@ public class Shipping {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipping_address_id", nullable = false)
     private ShippingAddress shippingAddress;
 

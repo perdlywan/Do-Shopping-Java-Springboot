@@ -10,6 +10,8 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import org.hibernate.annotations.BatchSize;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,16 +26,17 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @BatchSize(size = 50)
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Payment payment;
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Shipping shipping;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 

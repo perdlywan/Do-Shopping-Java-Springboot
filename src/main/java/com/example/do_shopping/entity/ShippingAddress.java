@@ -21,7 +21,7 @@ public class ShippingAddress {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
