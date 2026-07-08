@@ -6,10 +6,10 @@ import lombok.Data;
 
 @Data
 public class OrderItemRequestDTO {
-    @NotNull (message = "productId tidak boleh kosong")
+    @NotNull (message = "productId cannot be empty")
     private String productId;
 
-    @NotNull(message = "quantity tidak boleh null")
-    @Min(value = 1, message = "quantity minimal 1")
+    @NotNull(message = "quantity cannot be null")
+    @Min(value = 1, message = "quantity must be at least 1")
     private Integer quantity;
 }

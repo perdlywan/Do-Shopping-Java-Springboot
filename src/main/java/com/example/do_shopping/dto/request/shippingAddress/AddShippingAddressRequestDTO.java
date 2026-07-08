@@ -5,16 +5,16 @@ import lombok.Data;
 
 @Data
 public class AddShippingAddressRequestDTO {
-    @NotBlank (message = "address tidak boleh kosong")
+    @NotBlank (message = "address cannot be empty")
     private String address;
 
-    @NotBlank (message = "country tidak boleh kosong")
+    @NotBlank (message = "country cannot be empty")
     private String country;
 
-    @NotBlank (message = "state tidak boleh kosong")
+    @NotBlank (message = "state cannot be empty")
     private String state;
 
-    @NotBlank (message = "city tidak boleh kosong")
+    @NotBlank (message = "city cannot be empty")
     private String city;
 
     private String postalCode;

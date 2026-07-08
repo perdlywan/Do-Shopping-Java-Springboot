@@ -33,7 +33,7 @@ public class PaymentController {
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.OK.value(),
-                "Pembayaran berhasil",
+                "Payment successful",
                 paymentResponseDTO
         );
 

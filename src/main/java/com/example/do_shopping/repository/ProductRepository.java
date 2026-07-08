@@ -15,7 +15,14 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     Optional<Product> findByIdAndDeletedAtIsNull(String id);
 
-    @EntityGraph(attributePaths = {"category"})
+    @EntityGraph(attributePaths = { "category" })
     @Query("SELECT p FROM Product p WHERE p.deletedAt IS NULL")
     Page<Product> findAllActive(Pageable pageable);
+
+    @EntityGraph(attributePaths = { "category" })
+    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId AND p.deletedAt IS NULL")
+    Page<Product> findAllActiveByCategoryId(
+            @org.springframework.data.repository.query.Param("categoryId") String categoryId, Pageable pageable);
+
+    long countByDeletedAtIsNull();
 }

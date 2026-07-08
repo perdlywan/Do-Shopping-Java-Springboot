@@ -75,7 +75,7 @@ public class CategoryController {
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.CREATED.value(),
-                "Kategori berhasil ditambahkan",
+                "Category successfully added",
                 categoryResponseDTO
         );
 
@@ -90,7 +90,7 @@ public class CategoryController {
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.OK.value(),
-                "Kategori berhasil diupdate",
+                "Category successfully updated",
                 categoryResponseDTO
         );
 
@@ -105,7 +105,7 @@ public class CategoryController {
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.OK.value(),
-                "Kategori berhasil dihapus",
+                "Category successfully deleted",
                 categoryResponseDTO
         );
 

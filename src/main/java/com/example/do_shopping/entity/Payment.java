@@ -4,7 +4,8 @@ import com.example.do_shopping.enums.OrderStatus;
 import com.example.do_shopping.enums.PaymentMethod;
 import com.example.do_shopping.enums.PaymentStatus;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -17,7 +18,8 @@ import java.time.LocalDateTime;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "payments")
-@Data
+@Getter
+@Setter
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

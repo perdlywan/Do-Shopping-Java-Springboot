@@ -7,13 +7,13 @@ import com.example.do_shopping.entity.*;
 import com.example.do_shopping.enums.OrderStatus;
 import com.example.do_shopping.enums.PaymentMethod;
 import com.example.do_shopping.enums.PaymentStatus;
+import com.example.do_shopping.enums.Role;
 import com.example.do_shopping.enums.ShippingStatus;
 import com.example.do_shopping.exception.custom.BusinessException;
 import com.example.do_shopping.exception.custom.DataNotFoundException;
 import com.example.do_shopping.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Service
@@ -35,7 +35,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ShippingAddressRepository shippingAddressRepository;
     private final ProductRepository productRepository;
-    private final OrderDetailRepository orderDetailRepository;
     private final ShippingRepositroy shippingRepository;
     private final PaymentRepository paymentRepository;
 
@@ -56,13 +55,16 @@ public class OrderService {
     }
 
     public Order getOrderById(String id) {
-        Order order = orderRepository.findByIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new DataNotFoundException("Data order tidak ditemukan"));
+        Order order = orderRepository.findWithDetailsByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new DataNotFoundException("Order data not found"));
 
-        Customer customer = authService.getCurrentCustomer();
+        User user = authService.getCurrentUser();
 
-        if (!customer.getId().equals(order.getCustomer().getId())) {
-            throw new BusinessException("Order bukan milik anda");
+        if (!Role.ADMIN.equals(user.getRole())) {
+            Customer customer = authService.getCurrentCustomer();
+            if (!customer.getId().equals(order.getCustomer().getId())) {
+                throw new BusinessException("Order does not belong to you");
+            }
         }
 
         return order;
@@ -78,15 +80,15 @@ public class OrderService {
             address = shippingAddressRepository
                     .findByCustomerIdAndIsDefaultTrueAndDeletedAtIsNull(customer.getId())
                     .orElseThrow(() -> new DataNotFoundException(
-                            "Alamat default tidak ditemukan. Silakan pilih alamat atau atur alamat default."));
+                            "Default address not found. Please select an address or set a default address."));
         } else {
             address = shippingAddressRepository
                     .findByIdAndDeletedAtIsNull(request.getShippingAddressId())
-                    .orElseThrow(() -> new DataNotFoundException("Alamat tidak ditemukan"));
+                    .orElseThrow(() -> new DataNotFoundException("Address not found"));
         }
 
         if (!address.getCustomer().getId().equals(customer.getId())) {
-            throw new AccessDeniedException("Bukan alamat anda");
+            throw new AccessDeniedException("Not your address");
         }
 
         Order order = new Order();
@@ -95,16 +97,20 @@ public class OrderService {
         order.setNote(request.getNote());
         order.setStatus(OrderStatus.PENDING);
 
+        String orderNumber = "ORD-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "-"
+                + UUID.randomUUID().toString().substring(0, 4).toUpperCase();
+        order.setOrderNumber(orderNumber);
+
         Integer totalQuantity = 0;
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (OrderItemRequestDTO itemRequest : request.getItems()) {
             Product product = productRepository
                     .findByIdAndDeletedAtIsNull(itemRequest.getProductId())
-                    .orElseThrow(() -> new DataNotFoundException("Produk tidak ditemukan"));
+                    .orElseThrow(() -> new DataNotFoundException("Product not found"));
 
             if (product.getStock() < itemRequest.getQuantity()) {
-                throw new BusinessException("Stok " + product.getName() + " tidak cukup");
+                throw new BusinessException("Stock for " + product.getName() + " is insufficient");
             }
 
             product.setStock(product.getStock() - itemRequest.getQuantity());
@@ -137,7 +143,7 @@ public class OrderService {
         payment.setProviderName(request.getProviderName());
         payment.setAmount(totalAmount);
 
-        if (request.getPaymentMethod() == PaymentMethod.COD) {
+        if (PaymentMethod.COD.equals(request.getPaymentMethod())) {
             payment.setPaymentExpiredAt(null);
         } else {
             payment.setPaymentExpiredAt(order.getOrderDate().plusHours(5));
@@ -158,16 +164,20 @@ public class OrderService {
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public Shipping updateOrder(String id, AdminUpdateOrderRequestDTO request) {
-        Order order = orderRepository.findByIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new DataNotFoundException("Order tidak ditemukan"));
+        Order order = orderRepository.findWithDetailsByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new DataNotFoundException("Order not found"));
 
-        if (request.getOrderStatus() != null) {
+        if (request.getOrderStatus() != null && request.getOrderStatus() != order.getStatus()) {
+            if (order.getStatus() == OrderStatus.COMPLETED || order.getStatus() == OrderStatus.CANCELLED) {
+                throw new BusinessException("Cannot change status of a COMPLETED or CANCELLED order");
+            }
             order.setStatus(request.getOrderStatus());
-            orderRepository.save(order);
         }
 
-        Shipping shipping = shippingRepository.findByOrderIdAndDeletedAtIsNull(order.getId())
-                .orElseThrow(() -> new DataNotFoundException("Data pengiriman tidak ditemukan untuk order ini"));
+        Shipping shipping = order.getShipping();
+        if (shipping == null || shipping.getDeletedAt() != null) {
+            throw new DataNotFoundException("Shipping data not found for this order");
+        }
 
         if (request.getCourierName() != null && !request.getCourierName().isBlank()) {
             shipping.setCourierName(request.getCourierName());
@@ -185,20 +195,24 @@ public class OrderService {
             shipping.setShippingCost(request.getShippingCost());
         }
 
-        if (request.getShippingStatus() != null) {
-            if (request.getShippingStatus() == ShippingStatus.SHIPPED &&
+        if (request.getShippingStatus() != null && request.getShippingStatus() != shipping.getStatus()) {
+            if (shipping.getStatus() == ShippingStatus.DELIVERED || shipping.getStatus() == ShippingStatus.CANCELLED) {
+                throw new BusinessException("Cannot change shipping status of a DELIVERED or CANCELLED order");
+            }
+
+            if (ShippingStatus.SHIPPED.equals(request.getShippingStatus()) &&
                     (shipping.getTrackingNumber() == null || shipping.getTrackingNumber().isBlank()) &&
                     request.getTrackingNumber() == null) {
-                throw new BusinessException("Nomor resi (tracking number) wajib diisi jika status diubah ke SHIPPED");
+                throw new BusinessException("Tracking number is required if status is changed to SHIPPED");
             }
 
             shipping.setStatus(request.getShippingStatus());
 
-            if (request.getShippingStatus() == ShippingStatus.SHIPPED && shipping.getShippedAt() == null) {
+            if (ShippingStatus.SHIPPED.equals(request.getShippingStatus()) && shipping.getShippedAt() == null) {
                 shipping.setShippedAt(LocalDateTime.now());
             }
 
-            if (request.getShippingStatus() == ShippingStatus.DELIVERED && shipping.getDeliveredAt() == null) {
+            if (ShippingStatus.DELIVERED.equals(request.getShippingStatus()) && shipping.getDeliveredAt() == null) {
                 shipping.setDeliveredAt(LocalDateTime.now());
             }
         }
@@ -211,7 +225,7 @@ public class OrderService {
             shipping.setDeliveredAt(request.getDeliveredAt());
         }
 
-        return shippingRepository.save(shipping);
+        return shipping;
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
@@ -219,44 +233,36 @@ public class OrderService {
     public Shipping cancelOrder(String id) {
         Customer customer = authService.getCurrentCustomer();
 
-        Order order = orderRepository.findByIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new DataNotFoundException("Order tidak ditemukan"));
+        Order order = orderRepository.findWithDetailsByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new DataNotFoundException("Order not found"));
 
         if (!customer.getId().equals(order.getCustomer().getId())) {
-            throw new AccessDeniedException("Order bukan punya anda");
+            throw new AccessDeniedException("Order does not belong to you");
         }
 
-        Order orderPending = orderRepository.findByIdAndDeletedAtIsNullAndStatus(id, OrderStatus.PENDING)
-                .orElseThrow(() -> new BusinessException("Order tidak dapat dicancel"));
-
-        List<OrderDetail> orderDetails = orderDetailRepository.findByOrderIdAndDeletedAtIsNull(orderPending.getId());
-
-        if (orderDetails.isEmpty()) {
-            throw new BusinessException("Detail order tidak ditemukan");
+        if (!OrderStatus.PENDING.equals(order.getStatus())) {
+            throw new BusinessException("Order cannot be canceled");
         }
 
-        for (OrderDetail orderDetailProduct : orderDetails) {
-            productRepository.findByIdAndDeletedAtIsNull(orderDetailProduct.getProduct().getId())
-            .ifPresent(product -> {
-                int updatedStock = product.getStock() + orderDetailProduct.getQuantity();
-                product.setStock(updatedStock);
-                productRepository.save(product);
-            });
+        if (order.getOrderDetails().isEmpty()) {
+            throw new BusinessException("Order details not found");
         }
 
-        orderPending.setStatus(OrderStatus.CANCELLED);
-        orderRepository.save(orderPending);
+        for (OrderDetail detail : order.getOrderDetails()) {
+            Product product = detail.getProduct();
+            product.setStock(product.getStock() + detail.getQuantity());
+        }
 
-        Payment payment = paymentRepository.findByOrderIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new DataNotFoundException("Pembayaran tidak ditemukan"));
+        order.setStatus(OrderStatus.CANCELLED);
 
-        payment.setStatus(PaymentStatus.CANCELLED);
-        paymentRepository.save(payment);
+        if (order.getPayment() != null) {
+            order.getPayment().setStatus(PaymentStatus.CANCELLED);
+        }
 
-        Shipping shipping = shippingRepository.findByOrderIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new DataNotFoundException("Pengiriman tidak ditemukan"));
+        if (order.getShipping() != null) {
+            order.getShipping().setStatus(ShippingStatus.CANCELLED);
+        }
 
-        shipping.setStatus(ShippingStatus.CANCELLED);
-        return shippingRepository.save(shipping);
+        return order.getShipping();
     }
 }

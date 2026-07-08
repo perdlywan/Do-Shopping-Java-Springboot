@@ -31,10 +31,11 @@ public class ProductController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDirection
+            @RequestParam(defaultValue = "asc") String sortDirection,
+            @RequestParam(required = false) String categoryId
     ){
         int pageIndex = page > 0 ? page - 1 : 0;
-        Page<Product> productsPage = productService.getAllProducts(pageIndex, size, sortBy, sortDirection);
+        Page<Product> productsPage = productService.getAllProducts(pageIndex, size, sortBy, sortDirection, categoryId);
 
         List<ProductResponseDTO> productResponseDTO = productsPage.getContent().stream()
                 .map(product -> new ProductResponseDTO (
@@ -96,7 +97,7 @@ public class ProductController {
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.CREATED.value(),
-                "Produk berhasil ditambahkan",
+                "Product successfully added",
                 productResponseDTO
         );
 
@@ -118,7 +119,7 @@ public class ProductController {
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.OK.value(),
-                "Produk berhasil diupdate",
+                "Product successfully updated",
                 productResponseDTO
         );
 
@@ -140,7 +141,7 @@ public class ProductController {
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.OK.value(),
-                "Produk berhasil dihapus",
+                "Product successfully deleted",
                 productResponseDTO
         );
 

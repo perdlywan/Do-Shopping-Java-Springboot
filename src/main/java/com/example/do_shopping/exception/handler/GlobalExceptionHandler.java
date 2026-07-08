@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
             DataNotFoundException ex,
             HttpServletRequest request){
 
-        log.error("Data tidak ditemukan: ", ex);
+        log.error("Data not found: ", ex);
 
         ErrorResponseDTO error = new ErrorResponseDTO(
                 HttpStatus.NOT_FOUND.value(),
@@ -76,7 +76,7 @@ public class GlobalExceptionHandler {
                 .map(err -> err.getField() + ": " + err.getDefaultMessage())
                 .collect(Collectors.joining(", "));
 
-        log.error("Error Validasi: " + message);
+        log.error("Validation error: " + message);
 
         ErrorResponseDTO error = new ErrorResponseDTO(
                 HttpStatus.BAD_REQUEST.value(),
@@ -92,7 +92,7 @@ public class GlobalExceptionHandler {
             Exception ex,
             HttpServletRequest request) {
 
-        log.error("Error saat mendapatkan data: ",ex);
+        log.error("Error fetching data: ",ex);
 
         ErrorResponseDTO error = new ErrorResponseDTO(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),

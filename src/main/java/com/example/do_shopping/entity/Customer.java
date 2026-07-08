@@ -1,7 +1,8 @@
 package com.example.do_shopping.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -13,7 +14,8 @@ import java.time.LocalDateTime;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "customers")
-@Data
+@Getter
+@Setter
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -50,5 +52,11 @@ public class Customer {
 
     @Column(name = "deleted_by")
     private String deletedBy;
+
+    @org.hibernate.annotations.Formula("(SELECT COUNT(o.id) FROM orders o WHERE o.customer_id = id AND o.deleted_at IS NULL AND o.status = 'COMPLETED')")
+    private Long totalOrders;
+
+    @org.hibernate.annotations.Formula("(SELECT COALESCE(SUM(o.total_amount), 0) FROM orders o WHERE o.customer_id = id AND o.deleted_at IS NULL AND o.status = 'COMPLETED')")
+    private java.math.BigDecimal totalSpent;
 
 }

@@ -31,7 +31,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         ObjectMapper mapper = new ObjectMapper();
         response.getWriter().write(mapper.writeValueAsString(body));
 
-        log.error("Akses tidak diizinkan");
+        log.error("Access denied");
     }
 }
 

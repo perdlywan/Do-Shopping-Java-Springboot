@@ -103,6 +103,7 @@ public class OrderController {
 
                     return new OrderResponseDTO(
                             order.getId(),
+                            order.getOrderNumber(),
                             order.getCustomer().getId(),
                             order.getOrderDate(),
                             order.getTotalQuantity(),
@@ -192,6 +193,7 @@ public class OrderController {
 
         OrderResponseDTO orderResponseDTO = new OrderResponseDTO(
                 order.getId(),
+                order.getOrderNumber(),
                 order.getCustomer().getId(),
                 order.getOrderDate(),
                 order.getTotalQuantity(),
@@ -282,6 +284,7 @@ public class OrderController {
 
                     return new OrderResponseDTO(
                             order.getId(),
+                            order.getOrderNumber(),
                             order.getCustomer().getId(),
                             order.getOrderDate(),
                             order.getTotalQuantity(),
@@ -370,6 +373,7 @@ public class OrderController {
 
         OrderResponseDTO orderResponseDTO = new OrderResponseDTO(
                 order.getId(),
+                order.getOrderNumber(),
                 order.getCustomer().getId(),
                 order.getOrderDate(),
                 order.getTotalQuantity(),
@@ -383,7 +387,7 @@ public class OrderController {
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.CREATED.value(),
-                "Order berhasil dibuat",
+                "Order successfully created",
                 orderResponseDTO
         );
 
@@ -453,6 +457,7 @@ public class OrderController {
 
         OrderResponseDTO orderResponseDTO = new OrderResponseDTO(
                 order.getId(),
+                order.getOrderNumber(),
                 order.getCustomer().getId(),
                 order.getOrderDate(),
                 order.getTotalQuantity(),
@@ -466,7 +471,7 @@ public class OrderController {
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.OK.value(),
-                "Order berhasil diupdate",
+                "Order successfully updated",
                 orderResponseDTO
         );
 
@@ -535,6 +540,7 @@ public class OrderController {
 
         OrderResponseDTO orderResponseDTO = new OrderResponseDTO(
                 order.getId(),
+                order.getOrderNumber(),
                 order.getCustomer().getId(),
                 order.getOrderDate(),
                 order.getTotalQuantity(),
@@ -548,7 +554,7 @@ public class OrderController {
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.OK.value(),
-                "Order berhasil dibatalkan",
+                "Order successfully canceled",
                 orderResponseDTO
         );
 

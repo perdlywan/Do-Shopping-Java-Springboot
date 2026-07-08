@@ -2,7 +2,8 @@ package com.example.do_shopping.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -15,7 +16,8 @@ import java.util.List;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "shipping_addresses")
-@Data
+@Getter
+@Setter
 public class ShippingAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -26,10 +26,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserLoginRequestDTO request){
-        String token = authService.login(request);
+        java.util.Map<String, String> authData = authService.login(request);
 
         return ResponseEntity.ok(Map.of(
-                "token", token,
+                "token", authData.get("token"),
+                "role", authData.get("role"),
                 "type", "Bearer"
         ));
     }
@@ -45,7 +46,7 @@ public class AuthController {
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.CREATED.value(),
-                "Register berhasil",
+                "Registration successful",
                 registerResponseDTO
         );
 

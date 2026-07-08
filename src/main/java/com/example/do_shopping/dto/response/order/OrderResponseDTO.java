@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 
 public class OrderResponseDTO {
     private String id;
+    private String orderNumber;
     private String customerId;
     private LocalDateTime orderDate;
     private Integer totalQuantity;

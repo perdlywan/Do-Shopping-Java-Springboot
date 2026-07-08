@@ -10,7 +10,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,34 +19,32 @@ import java.time.LocalDateTime;
 
 public class PaymentService {
     private final AuthService authService;
-    private final UserRepository userRepository;
-    private final CustomerRepository customerRepository;
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
-    private final ProductRepository productRepository;
-    private final OrderDetailRepository orderDetailRepository;
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @Transactional
-    public Payment doPayment(String id){
+    public Payment doPayment(String id) {
         Customer customer = authService.getCurrentCustomer();
 
         Order order = orderRepository.findByIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new DataNotFoundException("Order tidak ditemukan"));
+                .orElseThrow(() -> new DataNotFoundException("Order not found"));
 
-        if(!customer.getId().equals(order.getCustomer().getId())){
-            throw new AccessDeniedException("Order bukan punya anda");
+        if (!customer.getId().equals(order.getCustomer().getId())) {
+            throw new AccessDeniedException("Order does not belong to you");
         }
 
-        if(order.getStatus() != OrderStatus.PENDING){
-            throw new BusinessException("Order tidak dapat dibayar");
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new BusinessException("Order cannot be paid");
         }
 
         Payment payment = paymentRepository.findByOrderIdAndPaidAtIsNull(id)
-                .orElseThrow(() -> new DataNotFoundException("Order tidak ditemukan atau telah dibayarkan"));
+                .orElseThrow(() -> new DataNotFoundException("Order not found or already paid"));
 
-        if(payment.getPaymentExpiredAt().isBefore(LocalDateTime.now())){
-            throw new BusinessException("Waktu pembayaran sudah habis");
+        if (payment.getPaymentExpiredAt() != null && payment.getPaymentExpiredAt().isBefore(LocalDateTime.now())) {
+            payment.setStatus(PaymentStatus.EXPIRED);
+            paymentRepository.save(payment);
+            throw new BusinessException("Payment time has expired");
         }
 
         order.setStatus(OrderStatus.PAID);

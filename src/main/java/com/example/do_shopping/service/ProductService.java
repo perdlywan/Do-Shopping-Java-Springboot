@@ -30,28 +30,32 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
-    public Page<Product> getAllProducts(int page, int size, String sortBy, String sortDirection){
+    public Page<Product> getAllProducts(int page, int size, String sortBy, String sortDirection, String categoryId){
         Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
+        
+        if (categoryId != null && !categoryId.isBlank()) {
+            return productRepository.findAllActiveByCategoryId(categoryId, pageable);
+        }
         return productRepository.findAllActive(pageable);
     }
 
     public Product getProductById(String id){
         return productRepository.findByIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new DataNotFoundException("Produk tidak ditemukan"));
+                .orElseThrow(() -> new DataNotFoundException("Product not found"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public Product addProduct(AddProductRequestDTO request){
         Category category = categoryRepository.findByIdAndDeletedAtIsNull(request.getCategoryId())
-                .orElseThrow(() -> new DataNotFoundException("category_id " + request.getCategoryId() + " tidak tersedia"));
+                .orElseThrow(() -> new DataNotFoundException("category_id " + request.getCategoryId() + " not available"));
 
         Optional<Product> checkProductName = productRepository.findByNameAndDeletedAtIsNull(request.getName());
 
         if(checkProductName.isPresent()){
-            throw new BusinessException("Nama produk sudah ada");
+            throw new BusinessException("Product name already exists");
         }
 
         Product product = new Product();
@@ -67,20 +71,20 @@ public class ProductService {
     @Transactional
     public Product updateProduct(String id, UpdateProductRequestDTO request){
         Product product = productRepository.findByIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new DataNotFoundException("product_id " + id + " tidak ditemukan"));
+                .orElseThrow(() -> new DataNotFoundException("product_id " + id + " not found"));
 
         if (request.getCategoryId() != null) {
             Category category = categoryRepository
                     .findByIdAndDeletedAtIsNull(request.getCategoryId())
                     .orElseThrow(() -> new DataNotFoundException(
-                            "category_id " + request.getCategoryId() + " tidak tersedia"));
+                            "category_id " + request.getCategoryId() + " not available"));
             product.setCategory(category);
         }
 
         Optional<Product> checkProductName = productRepository.findByNameAndDeletedAtIsNull(request.getName());
 
         if(checkProductName.isPresent() && !checkProductName.get().getId().equals(id)){
-            throw new BusinessException("Nama Produk sudah ada");
+            throw new BusinessException("Product name already exists");
         }
 
         if(request.getName() != null && !request.getName().isBlank()){
@@ -95,7 +99,7 @@ public class ProductService {
             product.setStock(request.getStock());
         }
 
-        if(request.getDescription() != null && !request.getDescription().isBlank()){
+        if(request.getDescription() != null){
             product.setDescription(request.getDescription());
         }
 
@@ -106,7 +110,7 @@ public class ProductService {
     @Transactional
     public Product deleteProduct(String id){
         Product product = productRepository.findByIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new DataNotFoundException("product_id " + id + " tidak ditemukan"));
+                .orElseThrow(() -> new DataNotFoundException("product_id " + id + " not found"));
 
         product.setDeletedAt(LocalDateTime.now());
         product.setDeletedBy(SecurityUtil.getCurrentUsername());

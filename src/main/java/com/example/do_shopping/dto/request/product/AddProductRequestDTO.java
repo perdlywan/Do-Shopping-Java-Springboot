@@ -9,17 +9,17 @@ import java.math.BigDecimal;
 
 @Data
 public class AddProductRequestDTO {
-    @NotNull(message = "categoryId tidak boleh kosong")
+    @NotNull(message = "categoryId cannot be empty")
     private String categoryId;
 
-    @NotBlank(message = "name tidak boleh kosong")
+    @NotBlank(message = "name cannot be empty")
     private String name;
 
-    @NotNull(message = "price tidak boleh kosong")
-    @Positive(message = "price harus lebih besar dari 0")
+    @NotNull(message = "price cannot be empty")
+    @Positive(message = "price must be greater than 0")
     private BigDecimal price;
 
-    @NotNull(message = "stock tidak boleh kosong")
+    @NotNull(message = "stock cannot be empty")
     private int stock;
 
     private String description;

@@ -17,14 +17,21 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "orders")
-@Data
+@Getter
+@Setter
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @Column(name = "order_number", unique = true)
+    private String orderNumber;
 
     @BatchSize(size = 50)
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,  orphanRemoval = true)

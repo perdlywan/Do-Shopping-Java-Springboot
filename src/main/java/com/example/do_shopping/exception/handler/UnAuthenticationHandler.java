@@ -30,6 +30,6 @@ public class UnAuthenticationHandler implements AuthenticationEntryPoint {
         ObjectMapper mapper = new ObjectMapper();
         response.getWriter().write(mapper.writeValueAsString(body));
 
-        log.error("User belum login");
+        log.error("User not logged in");
     }
 }

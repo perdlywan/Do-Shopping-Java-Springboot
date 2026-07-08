@@ -2,7 +2,6 @@ package com.example.do_shopping.scheduler;
 
 import com.example.do_shopping.entity.Order;
 import com.example.do_shopping.entity.Payment;
-import com.example.do_shopping.entity.Shipping;
 import com.example.do_shopping.enums.OrderStatus;
 import com.example.do_shopping.enums.PaymentStatus;
 import com.example.do_shopping.entity.OrderDetail;
@@ -31,10 +30,11 @@ public class PaymentScheduler {
 
     @Transactional
     @Scheduled(fixedRate = 300000)
-    public void cancelExpiredPayments(){
-        List<Payment> expiredPayments = paymentRepository.findByStatusAndPaymentExpiredAtBefore(PaymentStatus.PENDING, LocalDateTime.now());
+    public void cancelExpiredPayments() {
+        List<Payment> expiredPayments = paymentRepository.findByStatusAndPaymentExpiredAtBefore(PaymentStatus.PENDING,
+                LocalDateTime.now());
 
-        for(Payment payment : expiredPayments){
+        for (Payment payment : expiredPayments) {
             payment.setStatus(PaymentStatus.EXPIRED);
             paymentRepository.save(payment);
 
@@ -52,11 +52,11 @@ public class PaymentScheduler {
             List<OrderDetail> orderDetails = orderDetailRepository.findByOrderIdAndDeletedAtIsNull(order.getId());
             for (OrderDetail orderDetailProduct : orderDetails) {
                 productRepository.findByIdAndDeletedAtIsNull(orderDetailProduct.getProduct().getId())
-                .ifPresent(product -> {
-                    int updatedStock = product.getStock() + orderDetailProduct.getQuantity();
-                    product.setStock(updatedStock);
-                    productRepository.save(product);
-                });
+                        .ifPresent(product -> {
+                            int updatedStock = product.getStock() + orderDetailProduct.getQuantity();
+                            product.setStock(updatedStock);
+                            productRepository.save(product);
+                        });
             }
         }
     }

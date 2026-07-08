@@ -10,17 +10,17 @@ import java.util.List;
 
 @Data
 public class AddOrderRequestDTO {
-    @NotEmpty(message = "items tidak boleh kosong")
+    @NotEmpty(message = "items cannot be empty")
     @Valid
     private List<OrderItemRequestDTO> items;
 
     private String note;
 
-    @NotNull(message = "paymentMethod tidak boleh kosong")
+    @NotNull(message = "paymentMethod cannot be empty")
     private PaymentMethod paymentMethod;
 
     private String providerName;
 
-    @NotNull(message = "shippingAddressId tidak boleh kosong")
+    @NotNull(message = "shippingAddressId cannot be empty")
     private String shippingAddressId;
 }

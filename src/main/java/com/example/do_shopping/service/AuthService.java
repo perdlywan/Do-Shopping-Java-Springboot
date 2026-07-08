@@ -17,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,17 +27,17 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public Customer register(CustomerRegisterRequestDTO request){
+    public Customer register(CustomerRegisterRequestDTO request) {
         Optional<User> checkUserName = userRepository.findByUsernameAndDeletedAtIsNull(request.getUsername());
 
-        if(checkUserName.isPresent()){
-            throw new BusinessException("Username sudah terdaftar");
+        if (checkUserName.isPresent()) {
+            throw new BusinessException("Username already registered");
         }
 
         Optional<User> checkUserEmail = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail());
 
-        if(checkUserEmail.isPresent()){
-            throw new BusinessException("Email sudah terdaftar");
+        if (checkUserEmail.isPresent()) {
+            throw new BusinessException("Email already registered");
         }
 
         User user = new User();
@@ -58,21 +57,35 @@ public class AuthService {
         return customerRepository.save(customer);
     }
 
-    public String login(UserLoginRequestDTO request){
+    public java.util.Map<String, String> login(UserLoginRequestDTO request) {
         String identifier = request.getUsername();
 
         User user = userRepository
-                .findByUsernameAndIsActiveAndDeletedAtIsNullOrEmailAndIsActiveAndDeletedAtIsNull(identifier, 1, identifier, 1)
-                .orElseThrow(() -> new BusinessException("Username atau password salah!"));
+                .findByUsernameAndIsActiveAndDeletedAtIsNullOrEmailAndIsActiveAndDeletedAtIsNull(identifier, 1,
+                        identifier, 1)
+                .orElseThrow(() -> new BusinessException("Invalid username or password!"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())){
-            throw new BusinessException("Username atau password salah!");
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BusinessException("Invalid username or password!");
         }
 
-        return jwtUtil.generateToken(request.getUsername());
+        return java.util.Map.of(
+                "token", jwtUtil.generateToken(user.getUsername()),
+                "role", user.getRole().name());
     }
 
-    public Customer getCurrentCustomer(){
+    public User getCurrentUser() {
+        String username = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        return userRepository
+                .findByUsernameAndDeletedAtIsNull(username)
+                .orElseThrow(() -> new DataNotFoundException("User not found"));
+    }
+
+    public Customer getCurrentCustomer() {
 
         String username = SecurityContextHolder
                 .getContext()
@@ -81,11 +94,11 @@ public class AuthService {
 
         User user = userRepository
                 .findByUsernameAndDeletedAtIsNull(username)
-                .orElseThrow(() -> new DataNotFoundException("User tidak ditemukan"));
+                .orElseThrow(() -> new DataNotFoundException("User not found"));
 
         return customerRepository
                 .findByUserIdAndDeletedAtIsNull(user.getId())
-                .orElseThrow(() -> new DataNotFoundException("Customer tidak ditemukan"));
+                .orElseThrow(() -> new DataNotFoundException("Customer not found"));
     }
 
 }

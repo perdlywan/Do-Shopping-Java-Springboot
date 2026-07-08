@@ -78,7 +78,7 @@ public class ShippingAddressController {
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.CREATED.value(),
-                "Alamat pengiriman berhasil ditambahkan",
+                "Shipping address successfully added",
                 shippingAddressResponseDTO
         );
 
@@ -102,7 +102,7 @@ public class ShippingAddressController {
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.OK.value(),
-                "Alamat pengiriman berhasil diupdate",
+                "Shipping address successfully updated",
                 shippingAddressResponseDTO
         );
 
@@ -126,7 +126,7 @@ public class ShippingAddressController {
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.OK.value(),
-                "Alamat pengiriman berhasil dihapus",
+                "Shipping address successfully deleted",
                 shippingAddressResponseDTO
         );
 

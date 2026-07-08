@@ -69,12 +69,12 @@ public class ShippingAddressService {
     @Transactional
     public ShippingAddress updateAddress(String id, UpdateShippingAddressRequestDTO request){
         ShippingAddress shippingAddress = shippingAddressRepository.findByIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new DataNotFoundException("shipping_address_id " + id + " tidak ditemukan"));
+                .orElseThrow(() -> new DataNotFoundException("shipping_address_id " + id + " not found"));
 
         Customer customer = authService.getCurrentCustomer();
 
         if(!shippingAddress.getCustomer().getId().equals(customer.getId())){
-            throw new AccessDeniedException("Anda tidak memiliki akses");
+            throw new AccessDeniedException("You do not have access");
         }
 
         if(request.getAddress() != null && !request.getAddress().isBlank()){
@@ -115,12 +115,12 @@ public class ShippingAddressService {
     @Transactional
     public ShippingAddress deleteAddress(String id){
         ShippingAddress shippingAddress = shippingAddressRepository.findByIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new DataNotFoundException("shipping_address_id " + id + " tidak ditemukan"));
+                .orElseThrow(() -> new DataNotFoundException("shipping_address_id " + id + " not found"));
 
         Customer customer = authService.getCurrentCustomer();
 
         if(!shippingAddress.getCustomer().getId().equals(customer.getId())){
-            throw new AccessDeniedException("Anda tidak memiliki akses");
+            throw new AccessDeniedException("You do not have access");
         }
 
         shippingAddress.setDeletedAt(LocalDateTime.now());
