@@ -1,0 +1,44 @@
+INSERT INTO products
+(id,category_id,name,price,stock,description,created_by,updated_by)
+VALUES
+
+-- Electronics
+('e1c12245-2688-40ef-8ca9-d953ba09d06f','36ab644d-db24-47a8-8f5e-1d9935d40e40','Laptop ASUS Vivobook 14',8500000,50,'Laptop ringan untuk kerja dan kuliah','SYSTEM','SYSTEM'),
+('6049668f-e61e-4628-b1f0-05c624dec57b','36ab644d-db24-47a8-8f5e-1d9935d40e40','Logitech Wireless Mouse M331',250000,120,'Mouse wireless silent click','SYSTEM','SYSTEM'),
+('f3a12f16-2351-4e6e-911f-5f6586cba76e','36ab644d-db24-47a8-8f5e-1d9935d40e40','Mechanical Keyboard RGB',750000,80,'Keyboard mechanical dengan backlight RGB','SYSTEM','SYSTEM'),
+('0c7944f0-ce1f-46c8-9a09-293ce729d422','36ab644d-db24-47a8-8f5e-1d9935d40e40','Samsung 24 Inch Monitor',2100000,40,'Monitor full HD untuk kerja dan gaming','SYSTEM','SYSTEM'),
+
+-- Fashion
+('c99acbf4-8abd-48ab-8000-c10a2635849d','42ef4b41-9907-44d8-b27e-f2d3b1e63b18','Kaos Polos Cotton Combed',120000,200,'Kaos polos bahan cotton combed premium','SYSTEM','SYSTEM'),
+('0f626e15-8fda-4de2-87c0-fe8eddd08b4f','42ef4b41-9907-44d8-b27e-f2d3b1e63b18','Jaket Hoodie Unisex',350000,150,'Hoodie nyaman untuk aktivitas sehari hari','SYSTEM','SYSTEM'),
+('351db0dc-b073-45e4-ae4a-0fa6d5b39bd4','42ef4b41-9907-44d8-b27e-f2d3b1e63b18','Celana Jeans Slim Fit',420000,90,'Celana jeans slim fit pria','SYSTEM','SYSTEM'),
+('12c9d75c-2a79-4225-8dc3-584156062f8e','42ef4b41-9907-44d8-b27e-f2d3b1e63b18','Kemeja Flannel Casual',275000,110,'Kemeja flannel casual pria wanita','SYSTEM','SYSTEM'),
+
+-- Books
+('ce77f0d5-e55f-41ae-b997-b8fa568e55e2','17bd5816-149e-4365-95e5-19f6d271736b','Clean Code by Robert C Martin',450000,60,'Buku best seller tentang clean code','SYSTEM','SYSTEM'),
+('fa594a4b-dfac-489a-aba2-2377c804a66d','17bd5816-149e-4365-95e5-19f6d271736b','Atomic Habits',180000,120,'Buku self improvement terkenal','SYSTEM','SYSTEM'),
+('67821e2d-e509-4c76-b195-2b79f9d263a5','17bd5816-149e-4365-95e5-19f6d271736b','The Pragmatic Programmer',390000,70,'Buku pemrograman klasik','SYSTEM','SYSTEM'),
+
+-- Food
+('f9e546ea-b0aa-4578-a861-1cf0dfd68245','3ecc820a-6179-4201-850d-20eddb57452c','Kopi Arabica Gayo 250gr',95000,300,'Kopi arabica premium dari Aceh','SYSTEM','SYSTEM'),
+('ca658e9d-2ff5-4ccc-962b-50b7b956f062','3ecc820a-6179-4201-850d-20eddb57452c','Coklat Premium 100gr',55000,250,'Coklat dark premium','SYSTEM','SYSTEM'),
+('5dee7aa1-ed96-4aaf-b4af-a08350b79d4f','3ecc820a-6179-4201-850d-20eddb57452c','Madu Hutan Asli 500ml',120000,180,'Madu alami tanpa campuran','SYSTEM','SYSTEM'),
+
+-- Health
+('2708a0be-b347-4d4d-8cb8-d4cecedb0e68','ec04b9f8-66a5-4a2b-b4d5-916c5aad2333','Vitamin C 1000mg',95000,200,'Suplemen vitamin C untuk daya tahan tubuh','SYSTEM','SYSTEM'),
+('a1ad4b59-ebb1-4afc-9f1b-455cd6d614b0','ec04b9f8-66a5-4a2b-b4d5-916c5aad2333','Masker Medis 50pcs',45000,500,'Masker medis 3 ply','SYSTEM','SYSTEM'),
+('d9b8a483-9729-472b-b177-66baf48f8405','ec04b9f8-66a5-4a2b-b4d5-916c5aad2333','Hand Sanitizer 100ml',25000,350,'Hand sanitizer alkohol 70 persen','SYSTEM','SYSTEM'),
+
+-- Sports
+('2dc58d88-dad7-40ef-b8a4-a576d702c501','c4b0d168-a38a-44b8-ad6e-953ceb8052b9','Sepatu Lari Pria',650000,100,'Sepatu running ringan dan nyaman','SYSTEM','SYSTEM'),
+('41bea038-a265-41c5-8fa1-0e742b48c16a','c4b0d168-a38a-44b8-ad6e-953ceb8052b9','Matras Yoga Anti Slip',220000,130,'Matras yoga anti slip premium','SYSTEM','SYSTEM'),
+('60203dd5-3b73-4129-b0d8-60ce8d126927','c4b0d168-a38a-44b8-ad6e-953ceb8052b9','Dumbbell Set 10kg',320000,90,'Dumbbell set untuk latihan rumah','SYSTEM','SYSTEM'),
+
+-- Home
+('abf9ccac-0ae9-4215-acfe-729fcd494a9c','e53d47b8-f7c1-4106-8d45-60d7efeeef8e','Lampu LED 12W',35000,400,'Lampu LED hemat energi','SYSTEM','SYSTEM'),
+('9f0316aa-dbf3-4cc3-b6aa-6fad8e6a2716','e53d47b8-f7c1-4106-8d45-60d7efeeef8e','Rice Cooker 1.8L',450000,70,'Rice cooker keluarga','SYSTEM','SYSTEM'),
+('e7cba5b7-0410-4ab6-9478-371ee0bcb43a','e53d47b8-f7c1-4106-8d45-60d7efeeef8e','Vacuum Cleaner Portable',520000,60,'Vacuum cleaner portable rumah','SYSTEM','SYSTEM'),
+
+-- Automotive
+('d87d5f95-91cc-4514-9e0c-f486eff7e901','1cb6c45e-f89a-4c6d-b0a2-11cc2b337f4f','Helm Full Face',650000,75,'Helm full face standar SNI','SYSTEM','SYSTEM'),
+('1f1c232b-7012-4b41-b849-00cac3d299f7','1cb6c45e-f89a-4c6d-b0a2-11cc2b337f4f','Oli Mesin Motor 1L',85000,200,'Oli mesin motor sintetis','SYSTEM','SYSTEM');
