@@ -1,0 +1,108 @@
+.topbar {
+  height: 70px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-4);
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.menuButton {
+  display: none;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  padding: var(--space-1);
+}
+
+.searchContainer {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-hover);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  width: 300px;
+}
+
+.searchInput {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+.searchInput::placeholder {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .menuButton {
+    display: block;
+  }
+  .searchContainer {
+    display: none;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.iconButton {
+  color: var(--text-secondary);
+  font-size: 1.25rem;
+  transition: color var(--transition-fast);
+}
+
+.iconButton:hover {
+  color: var(--accent-primary);
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background-color: var(--accent-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.profileName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.profileRole {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
