@@ -1,9 +1,0 @@
-INSERT INTO categories(id,name,created_by,updated_by) VALUES
-('36ab644d-db24-47a8-8f5e-1d9935d40e40','Electronics','SYSTEM','SYSTEM'),
-('42ef4b41-9907-44d8-b27e-f2d3b1e63b18','Fashion','SYSTEM','SYSTEM'),
-('17bd5816-149e-4365-95e5-19f6d271736b','Books','SYSTEM','SYSTEM'),
-('3ecc820a-6179-4201-850d-20eddb57452c','Food','SYSTEM','SYSTEM'),
-('ec04b9f8-66a5-4a2b-b4d5-916c5aad2333','Health','SYSTEM','SYSTEM'),
-('c4b0d168-a38a-44b8-ad6e-953ceb8052b9','Sports','SYSTEM','SYSTEM'),
-('e53d47b8-f7c1-4106-8d45-60d7efeeef8e','Home','SYSTEM','SYSTEM'),
-('1cb6c45e-f89a-4c6d-b0a2-11cc2b337f4f','Automotive','SYSTEM','SYSTEM');
