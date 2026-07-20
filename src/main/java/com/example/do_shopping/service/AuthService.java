@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -57,7 +58,7 @@ public class AuthService {
         return customerRepository.save(customer);
     }
 
-    public java.util.Map<String, String> login(UserLoginRequestDTO request) {
+    public Map<String, String> login(UserLoginRequestDTO request) {
         String identifier = request.getUsername();
 
         User user = userRepository
@@ -70,7 +71,7 @@ public class AuthService {
         }
 
         return java.util.Map.of(
-                "token", jwtUtil.generateToken(user.getUsername()),
+                "token", jwtUtil.generateToken(user.getUsername(), user.getRole().name()),
                 "role", user.getRole().name());
     }
 
