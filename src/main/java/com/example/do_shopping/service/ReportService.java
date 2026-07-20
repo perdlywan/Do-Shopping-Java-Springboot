@@ -1,9 +1,7 @@
 package com.example.do_shopping.service;
 
-import com.example.do_shopping.entity.Order;
 import com.example.do_shopping.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +14,7 @@ public class ReportService {
     private final ReportRepository reportRepository;
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Object[]> getAllOrders(LocalDate startDate, LocalDate endDate){
+    public List<Object[]> getAllOrders(LocalDate startDate, LocalDate endDate) {
         if (startDate == null || endDate == null) {
             return reportRepository.getFullSalesReport();
         } else {
@@ -25,7 +23,7 @@ public class ReportService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Object[]> getTopProducts(LocalDate startDate, LocalDate endDate){
+    public List<Object[]> getTopProducts(LocalDate startDate, LocalDate endDate) {
         if (startDate == null || endDate == null) {
             return reportRepository.getFullTopProductReport();
         } else {
@@ -34,7 +32,7 @@ public class ReportService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Object[]> getTopCustomers(LocalDate startDate, LocalDate endDate){
+    public List<Object[]> getTopCustomers(LocalDate startDate, LocalDate endDate) {
         if (startDate == null || endDate == null) {
             return reportRepository.getTopCustomerReport();
         } else {
