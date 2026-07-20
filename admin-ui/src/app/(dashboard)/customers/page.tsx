@@ -9,6 +9,7 @@ interface Customer {
   email: string;
   totalOrders: number;
   totalSpent: number;
+  status: string;
 }
 
 interface PagedResponse<T> {
@@ -87,6 +88,8 @@ export default async function CustomersPage({
               <th>Email</th>
               <th>Total Orders</th>
               <th>Total Spent</th>
+              <th>Status</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -104,6 +107,25 @@ export default async function CustomersPage({
                   <td>{customer.email}</td>
                   <td>{customer.totalOrders}</td>
                   <td className={styles.price}>{formatCurrency(customer.totalSpent)}</td>
+                  <td>
+                    <span
+                      style={{
+                        padding: '0.25rem 0.5rem',
+                        borderRadius: '4px',
+                        fontSize: '0.85rem',
+                        fontWeight: 'bold',
+                        backgroundColor: customer.status === 'Active' ? '#e6f4ea' : '#fce8e6',
+                        color: customer.status === 'Active' ? '#137333' : '#c5221f',
+                      }}
+                    >
+                      {customer.status}
+                    </span>
+                  </td>
+                  <td>
+                    <Link href={`/customers/${customer.id}`} style={{ color: '#0066cc', textDecoration: 'none' }}>
+                      View
+                    </Link>
+                  </td>
                 </tr>
               ))
             )}

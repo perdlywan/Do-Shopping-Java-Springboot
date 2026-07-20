@@ -26,6 +26,7 @@ interface Product {
   price: number;
   stock: number;
   description: string;
+  imageUrl?: string;
 }
 
 async function getCategories() {
@@ -92,7 +93,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
         <h1 className={styles.title}>Edit Product</h1>
       </div>
 
-      <div className={styles.card}>
+      <div className={styles.card} style={{ marginTop: '1.5rem' }}>
         <EditProductForm categories={categories} product={product} />
       </div>
     </div>

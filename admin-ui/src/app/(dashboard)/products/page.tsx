@@ -9,6 +9,7 @@ interface Product {
   price: number;
   stock: number;
   description: string;
+  imageUrl?: string;
 }
 
 interface PagedResponse<T> {
@@ -66,6 +67,7 @@ export default async function ProductsPage({
           <thead>
             <tr>
               <th>ID</th>
+              <th>Image</th>
               <th>Name</th>
               <th>Price</th>
               <th>Stock</th>
@@ -76,7 +78,7 @@ export default async function ProductsPage({
           <tbody>
             {products.length === 0 ? (
               <tr>
-                <td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>
+                <td colSpan={7} style={{ textAlign: 'center', padding: '2rem' }}>
                   No products available.
                 </td>
               </tr>
@@ -84,6 +86,17 @@ export default async function ProductsPage({
               products.map((product) => (
                 <tr key={product.id}>
                   <td>{product.id.substring(0, 8)}...</td>
+                  <td>
+                    {product.imageUrl ? (
+                      <img
+                        src={`http://localhost:8080${product.imageUrl}`}
+                        alt={product.name}
+                        style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 4 }}
+                      />
+                    ) : (
+                      <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>No image</span>
+                    )}
+                  </td>
                   <td>{product.name}</td>
                   <td className={styles.price}>
                     {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(product.price)}

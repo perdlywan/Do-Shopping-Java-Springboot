@@ -2,12 +2,12 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 import styles from './page.module.css';
 
-async function getOrders() {
+async function getOrders(page: number) {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
 
   try {
-    const res = await fetch('http://localhost:8080/orders?size=50&sortBy=orderDate&sortDirection=desc', {
+    const res = await fetch(`http://localhost:8080/orders?page=${page}&size=10&sortBy=orderDate&sortDirection=desc`, {
       headers: {
         'Authorization': `Bearer ${token}`
       },
@@ -21,13 +21,20 @@ async function getOrders() {
     return res.json();
   } catch (error) {
     console.error('Error fetching orders:', error);
-    return { data: [] };
+    return null;
   }
 }
 
-export default async function OrdersPage() {
-  const response = await getOrders();
+export default async function OrdersPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ page?: string }>;
+}) {
+  const resolvedParams = await searchParams;
+  const currentPage = Number(resolvedParams?.page) || 1;
+  const response = await getOrders(currentPage);
   const orders = response?.data || [];
+  const totalPages = response?.totalPages || 1;
 
   return (
     <div className={styles.container}>
@@ -81,6 +88,30 @@ export default async function OrdersPage() {
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          {currentPage > 1 ? (
+            <Link href={`/orders?page=${currentPage - 1}`} className={styles.pageBtn}>
+              Previous
+            </Link>
+          ) : (
+            <button className={styles.pageBtn} disabled>Previous</button>
+          )}
+          
+          <span className={styles.pageInfo}>
+            Page {currentPage} of {totalPages}
+          </span>
+
+          {currentPage < totalPages ? (
+            <Link href={`/orders?page=${currentPage + 1}`} className={styles.pageBtn}>
+              Next
+            </Link>
+          ) : (
+            <button className={styles.pageBtn} disabled>Next</button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

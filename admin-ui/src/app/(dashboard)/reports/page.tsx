@@ -35,6 +35,8 @@ async function fetchReport(endpoint: string, searchParams: { [key: string]: stri
   }
 }
 
+import PaginatedTable from './PaginatedTable';
+
 export default async function ReportsPage({
   searchParams,
 }: {
@@ -73,32 +75,16 @@ export default async function ReportsPage({
             <h2 className={styles.cardTitle}>Sales Report</h2>
             <ExportButton endpoint="sales" queryString={qString} fileName="laporan_penjualan.xlsx" />
           </div>
-          <div style={{ overflowX: 'auto' }}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Orders</th>
-                  <th>Revenue (Rp)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {salesData.length > 0 ? (
-                  salesData.map((item: any, idx: number) => (
-                    <tr key={idx}>
-                      <td>{item.tanggal}</td>
-                      <td>{item.totalOrder}</td>
-                      <td>{item.totalPenjualan.toLocaleString('id-ID')}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={3} className={styles.emptyState}>No sales data found for this period.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <PaginatedTable 
+            itemsPerPage={10} 
+            emptyMessage="No sales data found for this period."
+            headers={['Date', 'Orders', 'Revenue (Rp)']}
+            rows={salesData.map((item: any) => [
+              item.tanggal, 
+              item.totalOrder, 
+              (item.totalPenjualan || 0).toLocaleString('id-ID')
+            ])}
+          />
         </div>
 
         {/* Top Products Card */}
@@ -107,30 +93,15 @@ export default async function ReportsPage({
             <h2 className={styles.cardTitle}>Top Products</h2>
             <ExportButton endpoint="top-products" queryString={qString} fileName="top_produk.xlsx" />
           </div>
-          <div style={{ overflowX: 'auto' }}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Product Name</th>
-                  <th>Units Sold</th>
-                </tr>
-              </thead>
-              <tbody>
-                {topProductsData.length > 0 ? (
-                  topProductsData.map((item: any, idx: number) => (
-                    <tr key={idx}>
-                      <td>{item.nama}</td>
-                      <td>{item.totalTerjual}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={2} className={styles.emptyState}>No product sales data found.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <PaginatedTable 
+            itemsPerPage={10} 
+            emptyMessage="No product sales data found."
+            headers={['Product Name', 'Units Sold']}
+            rows={topProductsData.map((item: any) => [
+              item.nama,
+              item.totalTerjual
+            ])}
+          />
         </div>
 
         {/* Top Customers Card */}
@@ -139,30 +110,15 @@ export default async function ReportsPage({
             <h2 className={styles.cardTitle}>Top Customers</h2>
             <ExportButton endpoint="top-customers" queryString={qString} fileName="top_customer.xlsx" />
           </div>
-          <div style={{ overflowX: 'auto' }}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Customer Name</th>
-                  <th>Total Orders</th>
-                </tr>
-              </thead>
-              <tbody>
-                {topCustomersData.length > 0 ? (
-                  topCustomersData.map((item: any, idx: number) => (
-                    <tr key={idx}>
-                      <td>{item.nama}</td>
-                      <td>{item.totalOrder}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={2} className={styles.emptyState}>No customer data found.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <PaginatedTable 
+            itemsPerPage={10} 
+            emptyMessage="No customer data found."
+            headers={['Customer Name', 'Total Orders']}
+            rows={topCustomersData.map((item: any) => [
+              item.nama,
+              item.totalOrder
+            ])}
+          />
         </div>
       </div>
     </div>
