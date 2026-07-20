@@ -11,11 +11,14 @@ import com.example.do_shopping.dto.response.product.ProductResponseDTO;
 import org.springframework.data.domain.Page;
 import com.example.do_shopping.entity.Product;
 import com.example.do_shopping.service.ProductService;
+import com.example.do_shopping.service.StorageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
+    private final StorageService storageService;
 
     @GetMapping
     public ResponseEntity<PagedResponseDTO<ProductResponseDTO>> getAllProducts(
@@ -44,7 +48,8 @@ public class ProductController {
                         product.getName(),
                         product.getPrice(),
                         product.getStock(),
-                        product.getDescription()
+                        product.getDescription(),
+                        product.getImageUrl()
                 ))
                 .collect(Collectors.toList());
 
@@ -71,7 +76,8 @@ public class ProductController {
                 product.getName(),
                 product.getPrice(),
                 product.getStock(),
-                product.getDescription()
+                product.getDescription(),
+                product.getImageUrl()
         );
 
         DataResponseDTO response = new DataResponseDTO(
@@ -82,9 +88,17 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping
-    public ResponseEntity<ActionSuccessResponseDTO> addProduct(@Valid @RequestBody AddProductRequestDTO request){
-        Product product =  productService.addProduct(request);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ActionSuccessResponseDTO> addProduct(
+            @Valid @RequestPart("data") AddProductRequestDTO request,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+        
+        String imageUrl = null;
+        if (file != null && !file.isEmpty()) {
+            imageUrl = storageService.saveProductImage(file);
+        }
+
+        Product product =  productService.addProduct(request, imageUrl);
 
         ProductResponseDTO productResponseDTO = new ProductResponseDTO(
                 product.getId(),
@@ -92,7 +106,8 @@ public class ProductController {
                 product.getName(),
                 product.getPrice(),
                 product.getStock(),
-                product.getDescription()
+                product.getDescription(),
+                product.getImageUrl()
         );
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
@@ -104,9 +119,22 @@ public class ProductController {
         return  ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ActionSuccessResponseDTO> updateProduct(@PathVariable("id") String id, @Valid @RequestBody UpdateProductRequestDTO request){
-        Product product =  productService.updateProduct(id, request);
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ActionSuccessResponseDTO> updateProduct(
+            @PathVariable("id") String id, 
+            @Valid @RequestPart("data") UpdateProductRequestDTO request,
+            @RequestPart(value = "file", required = false) MultipartFile file){
+        
+        String imageUrl = null;
+        if (file != null && !file.isEmpty()) {
+            Product existingProduct = productService.getProductById(id);
+            if (existingProduct.getImageUrl() != null) {
+                storageService.deleteFile(existingProduct.getImageUrl());
+            }
+            imageUrl = storageService.saveProductImage(file);
+        }
+
+        Product product =  productService.updateProduct(id, request, imageUrl);
 
         ProductResponseDTO productResponseDTO = new ProductResponseDTO(
                 product.getId(),
@@ -114,7 +142,8 @@ public class ProductController {
                 product.getName(),
                 product.getPrice(),
                 product.getStock(),
-                product.getDescription()
+                product.getDescription(),
+                product.getImageUrl()
         );
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
@@ -136,7 +165,8 @@ public class ProductController {
                 product.getName(),
                 product.getPrice(),
                 product.getStock(),
-                product.getDescription()
+                product.getDescription(),
+                product.getImageUrl()
         );
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
@@ -146,5 +176,57 @@ public class ProductController {
         );
 
         return  ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ActionSuccessResponseDTO> uploadProductImage(
+            @PathVariable("id") String id,
+            @RequestParam("file") MultipartFile file) {
+
+        Product product = productService.getProductById(id);
+
+        // Delete old image if exists
+        if (product.getImageUrl() != null) {
+            storageService.deleteFile(product.getImageUrl());
+        }
+
+        String imageUrl = storageService.saveProductImage(file);
+        product = productService.updateProductImage(id, imageUrl);
+
+        ProductResponseDTO productResponseDTO = new ProductResponseDTO(
+                product.getId(),
+                product.getCategory().getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getStock(),
+                product.getDescription(),
+                product.getImageUrl()
+        );
+
+        ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
+                HttpStatus.OK.value(),
+                "Product image uploaded successfully",
+                productResponseDTO
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/{id}/image")
+    public ResponseEntity<ActionSuccessResponseDTO> deleteProductImage(@PathVariable("id") String id) {
+        Product product = productService.getProductById(id);
+
+        if (product.getImageUrl() != null) {
+            storageService.deleteFile(product.getImageUrl());
+            product = productService.updateProductImage(id, null);
+        }
+
+        ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
+                HttpStatus.OK.value(),
+                "Product image deleted successfully",
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

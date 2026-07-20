@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,31 +29,32 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
-    public Page<Product> getAllProducts(int page, int size, String sortBy, String sortDirection, String categoryId){
+    public Page<Product> getAllProducts(int page, int size, String sortBy, String sortDirection, String categoryId) {
         Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        
+
         if (categoryId != null && !categoryId.isBlank()) {
             return productRepository.findAllActiveByCategoryId(categoryId, pageable);
         }
         return productRepository.findAllActive(pageable);
     }
 
-    public Product getProductById(String id){
+    public Product getProductById(String id) {
         return productRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("Product not found"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Product addProduct(AddProductRequestDTO request){
+    public Product addProduct(AddProductRequestDTO request, String imageUrl) {
         Category category = categoryRepository.findByIdAndDeletedAtIsNull(request.getCategoryId())
-                .orElseThrow(() -> new DataNotFoundException("category_id " + request.getCategoryId() + " not available"));
+                .orElseThrow(
+                        () -> new DataNotFoundException("category_id " + request.getCategoryId() + " not available"));
 
         Optional<Product> checkProductName = productRepository.findByNameAndDeletedAtIsNull(request.getName());
 
-        if(checkProductName.isPresent()){
+        if (checkProductName.isPresent()) {
             throw new BusinessException("Product name already exists");
         }
 
@@ -64,12 +64,13 @@ public class ProductService {
         product.setPrice(request.getPrice());
         product.setStock(request.getStock());
         product.setDescription(request.getDescription());
+        product.setImageUrl(imageUrl);
         return productRepository.save(product);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Product updateProduct(String id, UpdateProductRequestDTO request){
+    public Product updateProduct(String id, UpdateProductRequestDTO request, String imageUrl) {
         Product product = productRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("product_id " + id + " not found"));
 
@@ -83,24 +84,28 @@ public class ProductService {
 
         Optional<Product> checkProductName = productRepository.findByNameAndDeletedAtIsNull(request.getName());
 
-        if(checkProductName.isPresent() && !checkProductName.get().getId().equals(id)){
+        if (checkProductName.isPresent() && !checkProductName.get().getId().equals(id)) {
             throw new BusinessException("Product name already exists");
         }
 
-        if(request.getName() != null && !request.getName().isBlank()){
+        if (request.getName() != null && !request.getName().isBlank()) {
             product.setName(request.getName());
         }
 
-        if(request.getPrice() != null && request.getPrice().compareTo(BigDecimal.ZERO) > 0){
+        if (request.getPrice() != null && request.getPrice().compareTo(BigDecimal.ZERO) > 0) {
             product.setPrice(request.getPrice());
         }
 
-        if(request.getStock() != null){
+        if (request.getStock() != null) {
             product.setStock(request.getStock());
         }
 
-        if(request.getDescription() != null){
+        if (request.getDescription() != null) {
             product.setDescription(request.getDescription());
+        }
+
+        if (imageUrl != null) {
+            product.setImageUrl(imageUrl);
         }
 
         return productRepository.save(product);
@@ -108,12 +113,21 @@ public class ProductService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Product deleteProduct(String id){
+    public Product deleteProduct(String id) {
         Product product = productRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("product_id " + id + " not found"));
 
         product.setDeletedAt(LocalDateTime.now());
         product.setDeletedBy(SecurityUtil.getCurrentUsername());
+        return productRepository.save(product);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public Product updateProductImage(String id, String imageUrl) {
+        Product product = productRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new DataNotFoundException("product_id " + id + " not found"));
+        product.setImageUrl(imageUrl);
         return productRepository.save(product);
     }
 }

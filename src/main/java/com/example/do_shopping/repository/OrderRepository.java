@@ -42,4 +42,6 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     BigDecimal sumCompletedOrdersAmount();
 
     List<Order> findTop5ByDeletedAtIsNullOrderByCreatedAtDesc();
+
+    Long countByStatusInAndDeletedAtIsNull(List<OrderStatus> statuses);
 }

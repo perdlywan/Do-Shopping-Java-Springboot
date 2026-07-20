@@ -5,9 +5,7 @@ import com.example.do_shopping.dto.request.shippingAddress.AddShippingAddressReq
 import com.example.do_shopping.dto.request.shippingAddress.UpdateShippingAddressRequestDTO;
 import com.example.do_shopping.entity.*;
 import com.example.do_shopping.exception.custom.DataNotFoundException;
-import com.example.do_shopping.repository.CustomerRepository;
 import com.example.do_shopping.repository.ShippingAddressRepository;
-import com.example.do_shopping.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -21,18 +19,15 @@ import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ShippingAddressService {
     private final AuthService authService;
     private final ShippingAddressRepository shippingAddressRepository;
-    private final UserRepository userRepository;
-    private final CustomerRepository customerRepository;
 
     @PreAuthorize("hasRole('CUSTOMER')")
-    public Page<ShippingAddress> getMyShippingAddresses(int pageIndex, int size, String sortBy, String sortDirection){
+    public Page<ShippingAddress> getMyShippingAddresses(int pageIndex, int size, String sortBy, String sortDirection) {
         Customer customer = authService.getCurrentCustomer();
         Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pageIndex, size, Sort.by(direction, sortBy));
@@ -43,7 +38,7 @@ public class ShippingAddressService {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @Transactional
-    public ShippingAddress addAddress(AddShippingAddressRequestDTO request){
+    public ShippingAddress addAddress(AddShippingAddressRequestDTO request) {
         Customer customer = authService.getCurrentCustomer();
 
         ShippingAddress shippingAddress = new ShippingAddress();
@@ -67,40 +62,40 @@ public class ShippingAddressService {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @Transactional
-    public ShippingAddress updateAddress(String id, UpdateShippingAddressRequestDTO request){
+    public ShippingAddress updateAddress(String id, UpdateShippingAddressRequestDTO request) {
         ShippingAddress shippingAddress = shippingAddressRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("shipping_address_id " + id + " not found"));
 
         Customer customer = authService.getCurrentCustomer();
 
-        if(!shippingAddress.getCustomer().getId().equals(customer.getId())){
+        if (!shippingAddress.getCustomer().getId().equals(customer.getId())) {
             throw new AccessDeniedException("You do not have access");
         }
 
-        if(request.getAddress() != null && !request.getAddress().isBlank()){
+        if (request.getAddress() != null && !request.getAddress().isBlank()) {
             shippingAddress.setAddress(request.getAddress());
         }
 
-        if(request.getCountry() != null && !request.getCountry().isBlank()){
+        if (request.getCountry() != null && !request.getCountry().isBlank()) {
             shippingAddress.setCountry(request.getCountry());
         }
 
-        if(request.getState() != null && !request.getState().isBlank()){
+        if (request.getState() != null && !request.getState().isBlank()) {
             shippingAddress.setState(request.getState());
         }
 
-        if(request.getCity() != null && !request.getCity().isBlank()){
+        if (request.getCity() != null && !request.getCity().isBlank()) {
             shippingAddress.setCity(request.getCity());
         }
 
-        if(request.getPostalCode() != null && !request.getPostalCode().isBlank()){
+        if (request.getPostalCode() != null && !request.getPostalCode().isBlank()) {
             shippingAddress.setPostalCode(request.getPostalCode());
         }
 
         if (Boolean.TRUE.equals(request.getIsDefault())) {
 
-            List<ShippingAddress> addresses =
-                    shippingAddressRepository.findAllByCustomerIdAndDeletedAtIsNull(customer.getId());
+            List<ShippingAddress> addresses = shippingAddressRepository
+                    .findAllByCustomerIdAndDeletedAtIsNull(customer.getId());
 
             addresses.forEach(addr -> addr.setIsDefault(false));
             shippingAddress.setIsDefault(true);
@@ -113,13 +108,13 @@ public class ShippingAddressService {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @Transactional
-    public ShippingAddress deleteAddress(String id){
+    public ShippingAddress deleteAddress(String id) {
         ShippingAddress shippingAddress = shippingAddressRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("shipping_address_id " + id + " not found"));
 
         Customer customer = authService.getCurrentCustomer();
 
-        if(!shippingAddress.getCustomer().getId().equals(customer.getId())){
+        if (!shippingAddress.getCustomer().getId().equals(customer.getId())) {
             throw new AccessDeniedException("You do not have access");
         }
 

@@ -16,5 +16,9 @@ public class DashboardSummaryResponseDTO {
     private Long totalOrders;
     private Long totalCustomers;
     private Long totalProducts;
-    private List<DashboardRecentOrderDTO> recentOrders;
+    private List<DashboardLowStockProductDTO> lowStockProducts;
+    
+    private Long pendingOrders;
+    private Long outOfStockProducts;
+    private List<DashboardLowStockProductDTO> slowMovingProducts;
 }

@@ -106,7 +106,7 @@ public class OrderService {
 
         for (OrderItemRequestDTO itemRequest : request.getItems()) {
             Product product = productRepository
-                    .findByIdAndDeletedAtIsNull(itemRequest.getProductId())
+                    .findByIdAndDeletedAtIsNullWithPessimisticLock(itemRequest.getProductId())
                     .orElseThrow(() -> new DataNotFoundException("Product not found"));
 
             if (product.getStock() < itemRequest.getQuantity()) {
