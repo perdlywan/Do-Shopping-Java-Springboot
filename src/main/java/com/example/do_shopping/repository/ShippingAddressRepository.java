@@ -1,6 +1,5 @@
 package com.example.do_shopping.repository;
 
-import com.example.do_shopping.entity.Customer;
 import com.example.do_shopping.entity.ShippingAddress;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,7 +17,7 @@ public interface ShippingAddressRepository extends JpaRepository<ShippingAddress
 
     List<ShippingAddress> findAllByCustomerIdAndDeletedAtIsNull(String customerId);
 
-    @EntityGraph(attributePaths = {"customer"})
+    @EntityGraph(attributePaths = { "customer" })
     Page<ShippingAddress> findAllByCustomerIdAndDeletedAtIsNull(String customerId, Pageable pageable);
 
     @Query("SELECT s FROM ShippingAddress s WHERE s.deletedAt IS NULL")

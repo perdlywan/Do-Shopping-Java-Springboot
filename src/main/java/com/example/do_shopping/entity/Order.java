@@ -1,9 +1,7 @@
 package com.example.do_shopping.entity;
 
 import com.example.do_shopping.enums.OrderStatus;
-import com.example.do_shopping.enums.Role;
 import jakarta.persistence.*;
-import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -34,7 +32,7 @@ public class Order {
     private String orderNumber;
 
     @BatchSize(size = 50)
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

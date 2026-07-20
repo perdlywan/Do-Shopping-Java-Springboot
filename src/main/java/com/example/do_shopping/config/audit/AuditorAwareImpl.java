@@ -1,6 +1,5 @@
 package com.example.do_shopping.config.audit;
 
-import com.example.do_shopping.entity.User;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

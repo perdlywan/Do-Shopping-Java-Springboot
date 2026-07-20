@@ -1,6 +1,5 @@
 package com.example.do_shopping.entity;
 
-import com.example.do_shopping.enums.OrderStatus;
 import com.example.do_shopping.enums.ShippingStatus;
 import jakarta.persistence.*;
 import lombok.Getter;

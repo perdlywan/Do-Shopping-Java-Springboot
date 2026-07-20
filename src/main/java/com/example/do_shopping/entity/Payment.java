@@ -1,6 +1,5 @@
 package com.example.do_shopping.entity;
 
-import com.example.do_shopping.enums.OrderStatus;
 import com.example.do_shopping.enums.PaymentMethod;
 import com.example.do_shopping.enums.PaymentStatus;
 import jakarta.persistence.*;
@@ -30,10 +29,10 @@ public class Payment {
     private Order order;
 
     @Enumerated(EnumType.STRING)
-    @Column (name = "method_type")
+    @Column(name = "method_type")
     private PaymentMethod methodType;
 
-    @Column (name = "provider_name")
+    @Column(name = "provider_name")
     private String providerName;
 
     private BigDecimal amount;
@@ -42,10 +41,10 @@ public class Payment {
     @Column(name = "status", nullable = false)
     private PaymentStatus status;
 
-    @Column (name = "payment_expired_at")
+    @Column(name = "payment_expired_at")
     private LocalDateTime paymentExpiredAt;
 
-    @Column (name = "paid_at")
+    @Column(name = "paid_at")
     private LocalDateTime paidAt;
 
     @CreatedDate
