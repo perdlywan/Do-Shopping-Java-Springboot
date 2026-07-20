@@ -4,7 +4,6 @@ import com.example.do_shopping.dto.request.order.AddOrderRequestDTO;
 import com.example.do_shopping.dto.request.order.AdminUpdateOrderRequestDTO;
 import com.example.do_shopping.dto.response.ActionSuccessResponseDTO;
 import com.example.do_shopping.dto.response.DataResponseDTO;
-import com.example.do_shopping.dto.response.category.CategoryResponseDTO;
 import com.example.do_shopping.dto.response.order.OrderDetailResponseDTO;
 import com.example.do_shopping.dto.response.order.OrderResponseDTO;
 import com.example.do_shopping.dto.response.payment.PaymentResponseDTO;
@@ -30,534 +29,186 @@ import java.util.stream.Collectors;
 @RequestMapping("/orders")
 @RequiredArgsConstructor
 public class OrderController {
-    private final OrderService orderService;
+        private final OrderService orderService;
 
-    @GetMapping
-    public ResponseEntity<PagedResponseDTO<OrderResponseDTO>> getOrders(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDirection
-    ){
-        int pageIndex = page > 0 ? page - 1 : 0;
-        Page<Order> ordersPage =  orderService.getAllOrders(pageIndex, size, sortBy, sortDirection);
+        @GetMapping
+        public ResponseEntity<PagedResponseDTO<OrderResponseDTO>> getOrders(
+                        @RequestParam(defaultValue = "1") int page,
+                        @RequestParam(defaultValue = "10") int size,
+                        @RequestParam(defaultValue = "id") String sortBy,
+                        @RequestParam(defaultValue = "asc") String sortDirection) {
+                int pageIndex = page > 0 ? page - 1 : 0;
+                Page<Order> ordersPage = orderService.getAllOrders(pageIndex, size, sortBy, sortDirection);
 
-        List<OrderResponseDTO> orderResponseDTO = ordersPage.getContent().stream()
-                .map(order -> {
-                    List<OrderDetailResponseDTO> detailsDTO = order.getOrderDetails().stream()
-                            .map(detail -> new OrderDetailResponseDTO(
-                                    detail.getId(),
-                                    detail.getProduct().getId(),
-                                    detail.getProductName(),
-                                    detail.getPrice(),
-                                    detail.getQuantity(),
-                                    detail.getSubTotal()
-                            ))
-                            .collect(Collectors.toList());
+                List<OrderResponseDTO> orderResponseDTO = ordersPage.getContent().stream()
+                                .map(this::mapToResponseDTO)
+                                .collect(Collectors.toList());
 
-                    PaymentResponseDTO paymentDTO = null;
-                    if (order.getPayment() != null) {
+                PagedResponseDTO<OrderResponseDTO> response = new PagedResponseDTO<>(
+                                HttpStatus.OK.value(),
+                                orderResponseDTO,
+                                ordersPage.getNumber() + 1,
+                                ordersPage.getSize(),
+                                ordersPage.getTotalElements(),
+                                ordersPage.getTotalPages(),
+                                ordersPage.isLast());
+
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        @GetMapping("/{id}")
+        public ResponseEntity<DataResponseDTO> getOrderById(@PathVariable("id") String id) {
+                Order order = orderService.getOrderById(id);
+
+                OrderResponseDTO orderResponseDTO = mapToResponseDTO(order);
+
+                DataResponseDTO response = new DataResponseDTO(
+                                HttpStatus.OK.value(),
+                                orderResponseDTO);
+
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        @GetMapping("/my-orders")
+        public ResponseEntity<PagedResponseDTO<OrderResponseDTO>> getMyOrders(
+                        @RequestParam(defaultValue = "1") int page,
+                        @RequestParam(defaultValue = "10") int size,
+                        @RequestParam(defaultValue = "id") String sortBy,
+                        @RequestParam(defaultValue = "asc") String sortDirection) {
+                int pageIndex = page > 0 ? page - 1 : 0;
+                Page<Order> ordersPage = orderService.getCustomerOrders(pageIndex, size, sortBy, sortDirection);
+
+                List<OrderResponseDTO> orderResponseDTO = ordersPage.getContent().stream()
+                                .map(this::mapToResponseDTO)
+                                .collect(Collectors.toList());
+
+                PagedResponseDTO<OrderResponseDTO> response = new PagedResponseDTO<>(
+                                HttpStatus.OK.value(),
+                                orderResponseDTO,
+                                ordersPage.getNumber() + 1,
+                                ordersPage.getSize(),
+                                ordersPage.getTotalElements(),
+                                ordersPage.getTotalPages(),
+                                ordersPage.isLast());
+
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        @PostMapping
+        public ResponseEntity<ActionSuccessResponseDTO> addOrder(@Valid @RequestBody AddOrderRequestDTO request) {
+                Shipping shipping = orderService.addOrder(request);
+
+                Order order = shipping.getOrder();
+
+                OrderResponseDTO orderResponseDTO = mapToResponseDTO(order);
+
+                ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
+                                HttpStatus.CREATED.value(),
+                                "Order successfully created",
+                                orderResponseDTO);
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        }
+
+        @PutMapping("/{id}")
+        public ResponseEntity<ActionSuccessResponseDTO> updateOrder(@PathVariable("id") String id,
+                        @Valid @RequestBody AdminUpdateOrderRequestDTO request) {
+                Shipping shipping = orderService.updateOrder(id, request);
+
+                Order order = shipping.getOrder();
+
+                OrderResponseDTO orderResponseDTO = mapToResponseDTO(order);
+
+                ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
+                                HttpStatus.OK.value(),
+                                "Order successfully updated",
+                                orderResponseDTO);
+
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        @PutMapping("/cancel/{id}")
+        public ResponseEntity<ActionSuccessResponseDTO> cancelOrder(@PathVariable("id") String id) {
+                Shipping shipping = orderService.cancelOrder(id);
+
+                Order order = shipping.getOrder();
+
+                OrderResponseDTO orderResponseDTO = mapToResponseDTO(order);
+
+                ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
+                                HttpStatus.OK.value(),
+                                "Order successfully canceled",
+                                orderResponseDTO);
+
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        private OrderResponseDTO mapToResponseDTO(Order order) {
+                List<OrderDetailResponseDTO> detailsDTO = order.getOrderDetails().stream()
+                                .map(detail -> new OrderDetailResponseDTO(
+                                                detail.getId(),
+                                                detail.getProduct().getId(),
+                                                detail.getProductName(),
+                                                detail.getPrice(),
+                                                detail.getQuantity(),
+                                                detail.getSubTotal()))
+                                .collect(Collectors.toList());
+
+                PaymentResponseDTO paymentDTO = null;
+                if (order.getPayment() != null) {
                         Payment payment = order.getPayment();
                         paymentDTO = new PaymentResponseDTO(
-                                payment.getId(),
-                                payment.getMethodType(),
-                                payment.getProviderName(),
-                                payment.getAmount(),
-                                payment.getPaymentExpiredAt(),
-                                payment.getStatus(),
-                                payment.getPaidAt()
-                        );
-                    }
+                                        payment.getId(),
+                                        payment.getMethodType(),
+                                        payment.getProviderName(),
+                                        payment.getAmount(),
+                                        payment.getPaymentExpiredAt(),
+                                        payment.getStatus(),
+                                        payment.getPaidAt());
+                }
 
-                    ShippingResponseDTO shippingDTO = null;
-                    if (order.getShipping() != null) {
+                ShippingResponseDTO shippingDTO = null;
+                if (order.getShipping() != null) {
                         Shipping shipping = order.getShipping();
 
                         ShippingAddressResponseDTO addressDTO = null;
                         if (shipping.getShippingAddress() != null) {
-                            ShippingAddress addr = shipping.getShippingAddress();
-                            addressDTO = new ShippingAddressResponseDTO(
-                                    addr.getId(),
-                                    addr.getCustomer().getId(),
-                                    addr.getAddress(),
-                                    addr.getCountry(),
-                                    addr.getState(),
-                                    addr.getCity(),
-                                    addr.getPostalCode(),
-                                    addr.getIsDefault()
-                            );
+                                ShippingAddress addr = shipping.getShippingAddress();
+                                addressDTO = new ShippingAddressResponseDTO(
+                                                addr.getId(),
+                                                addr.getCustomer().getId(),
+                                                addr.getAddress(),
+                                                addr.getCountry(),
+                                                addr.getState(),
+                                                addr.getCity(),
+                                                addr.getPostalCode(),
+                                                addr.getIsDefault());
                         }
 
                         shippingDTO = new ShippingResponseDTO(
-                                shipping.getId(),
-                                addressDTO,
-                                shipping.getCourierName(),
-                                shipping.getServiceType(),
-                                shipping.getTrackingNumber(),
-                                shipping.getShippingCost(),
-                                shipping.getStatus(),
-                                shipping.getShippedAt(),
-                                shipping.getDeliveredAt()
-                        );
-                    }
+                                        shipping.getId(),
+                                        addressDTO,
+                                        shipping.getCourierName(),
+                                        shipping.getServiceType(),
+                                        shipping.getTrackingNumber(),
+                                        shipping.getShippingCost(),
+                                        shipping.getStatus(),
+                                        shipping.getShippedAt(),
+                                        shipping.getDeliveredAt());
+                }
 
-                    return new OrderResponseDTO(
-                            order.getId(),
-                            order.getOrderNumber(),
-                            order.getCustomer().getId(),
-                            order.getOrderDate(),
-                            order.getTotalQuantity(),
-                            order.getTotalAmount(),
-                            order.getNote(),
-                            order.getStatus(),
-                            detailsDTO,
-                            paymentDTO,
-                            shippingDTO
-                    );
-                })
-                .collect(Collectors.toList());
-
-        PagedResponseDTO<OrderResponseDTO> response = new PagedResponseDTO<>(
-                HttpStatus.OK.value(),
-                orderResponseDTO,
-                ordersPage.getNumber() + 1,
-                ordersPage.getSize(),
-                ordersPage.getTotalElements(),
-                ordersPage.getTotalPages(),
-                ordersPage.isLast()
-        );
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<DataResponseDTO> getOrderById(@PathVariable("id") String id){
-        Order order = orderService.getOrderById(id);
-
-        List<OrderDetailResponseDTO> detailsDTO = order.getOrderDetails().stream()
-                .map(detail -> new OrderDetailResponseDTO(
-                        detail.getId(),
-                        detail.getProduct().getId(),
-                        detail.getProductName(),
-                        detail.getPrice(),
-                        detail.getQuantity(),
-                        detail.getSubTotal()
-                ))
-                .collect(Collectors.toList());
-
-        PaymentResponseDTO paymentDTO = null;
-        if (order.getPayment() != null) {
-            Payment payment = order.getPayment();
-            paymentDTO = new PaymentResponseDTO(
-                    payment.getId(),
-                    payment.getMethodType(),
-                    payment.getProviderName(),
-                    payment.getAmount(),
-                    payment.getPaymentExpiredAt(),
-                    payment.getStatus(),
-                    payment.getPaidAt()
-            );
+                return new OrderResponseDTO(
+                                order.getId(),
+                                order.getOrderNumber(),
+                                order.getCustomer().getId(),
+                                order.getOrderDate(),
+                                order.getTotalQuantity(),
+                                order.getTotalAmount(),
+                                order.getNote(),
+                                order.getStatus(),
+                                detailsDTO,
+                                paymentDTO,
+                                shippingDTO);
         }
-
-        ShippingResponseDTO shippingDTO = null;
-        if (order.getShipping() != null) {
-            Shipping shipping = order.getShipping();
-
-            ShippingAddressResponseDTO addressDTO = null;
-            if (shipping.getShippingAddress() != null) {
-                ShippingAddress addr = shipping.getShippingAddress();
-                addressDTO = new ShippingAddressResponseDTO(
-                        addr.getId(),
-                        addr.getCustomer().getId(),
-                        addr.getAddress(),
-                        addr.getCountry(),
-                        addr.getState(),
-                        addr.getCity(),
-                        addr.getPostalCode(),
-                        addr.getIsDefault()
-                );
-            }
-
-            shippingDTO = new ShippingResponseDTO(
-                    shipping.getId(),
-                    addressDTO,
-                    shipping.getCourierName(),
-                    shipping.getServiceType(),
-                    shipping.getTrackingNumber(),
-                    shipping.getShippingCost(),
-                    shipping.getStatus(),
-                    shipping.getShippedAt(),
-                    shipping.getDeliveredAt()
-            );
-        }
-
-        OrderResponseDTO orderResponseDTO = new OrderResponseDTO(
-                order.getId(),
-                order.getOrderNumber(),
-                order.getCustomer().getId(),
-                order.getOrderDate(),
-                order.getTotalQuantity(),
-                order.getTotalAmount(),
-                order.getNote(),
-                order.getStatus(),
-                detailsDTO,
-                paymentDTO,
-                shippingDTO
-        );
-
-        DataResponseDTO response = new DataResponseDTO(
-                HttpStatus.OK.value(),
-                orderResponseDTO
-        );
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @GetMapping("/my-orders")
-    public ResponseEntity<PagedResponseDTO<OrderResponseDTO>> getMyOrders(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDirection
-    ){
-        int pageIndex = page > 0 ? page - 1 : 0;
-        Page<Order> ordersPage = orderService.getCustomerOrders(pageIndex, size, sortBy, sortDirection);
-
-        List<OrderResponseDTO> orderResponseDTO = ordersPage.getContent().stream()
-                .map(order -> {
-                    List<OrderDetailResponseDTO> detailsDTO = order.getOrderDetails().stream()
-                            .map(detail -> new OrderDetailResponseDTO(
-                                    detail.getId(),
-                                    detail.getProduct().getId(),
-                                    detail.getProductName(),
-                                    detail.getPrice(),
-                                    detail.getQuantity(),
-                                    detail.getSubTotal()
-                            ))
-                            .collect(Collectors.toList());
-
-                    PaymentResponseDTO paymentDTO = null;
-                    if (order.getPayment() != null) {
-                        Payment payment = order.getPayment();
-                        paymentDTO = new PaymentResponseDTO(
-                                payment.getId(),
-                                payment.getMethodType(),
-                                payment.getProviderName(),
-                                payment.getAmount(),
-                                payment.getPaymentExpiredAt(),
-                                payment.getStatus(),
-                                payment.getPaidAt()
-                        );
-                    }
-
-                    ShippingResponseDTO shippingDTO = null;
-                    if (order.getShipping() != null) {
-                        Shipping shipping = order.getShipping();
-
-                        ShippingAddressResponseDTO addressDTO = null;
-                        if (shipping.getShippingAddress() != null) {
-                            ShippingAddress addr = shipping.getShippingAddress();
-                            addressDTO = new ShippingAddressResponseDTO(
-                                    addr.getId(),
-                                    addr.getCustomer().getId(),
-                                    addr.getAddress(),
-                                    addr.getCountry(),
-                                    addr.getState(),
-                                    addr.getCity(),
-                                    addr.getPostalCode(),
-                                    addr.getIsDefault()
-                            );
-                        }
-
-                        shippingDTO = new ShippingResponseDTO(
-                                shipping.getId(),
-                                addressDTO,
-                                shipping.getCourierName(),
-                                shipping.getServiceType(),
-                                shipping.getTrackingNumber(),
-                                shipping.getShippingCost(),
-                                shipping.getStatus(),
-                                shipping.getShippedAt(),
-                                shipping.getDeliveredAt()
-                        );
-                    }
-
-                    return new OrderResponseDTO(
-                            order.getId(),
-                            order.getOrderNumber(),
-                            order.getCustomer().getId(),
-                            order.getOrderDate(),
-                            order.getTotalQuantity(),
-                            order.getTotalAmount(),
-                            order.getNote(),
-                            order.getStatus(),
-                            detailsDTO,
-                            paymentDTO,
-                            shippingDTO
-                    );
-                })
-                .collect(Collectors.toList());
-
-        PagedResponseDTO<OrderResponseDTO> response = new PagedResponseDTO<>(
-                HttpStatus.OK.value(),
-                orderResponseDTO,
-                ordersPage.getNumber() + 1,
-                ordersPage.getSize(),
-                ordersPage.getTotalElements(),
-                ordersPage.getTotalPages(),
-                ordersPage.isLast()
-        );
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @PostMapping
-    public ResponseEntity<ActionSuccessResponseDTO> addOrder(@Valid @RequestBody AddOrderRequestDTO request){
-         Shipping shipping = orderService.addOrder(request);
-
-         Order order = shipping.getOrder();
-
-        List<OrderDetailResponseDTO> detailsDTO = order.getOrderDetails().stream()
-                .map(detail -> new OrderDetailResponseDTO(
-                        detail.getId(),
-                        detail.getProduct().getId(),
-                        detail.getProductName(),
-                        detail.getPrice(),
-                        detail.getQuantity(),
-                        detail.getSubTotal()
-                ))
-                .collect(Collectors.toList());
-
-        PaymentResponseDTO paymentDTO = null;
-        if (order.getPayment() != null) {
-            Payment payment = order.getPayment();
-            paymentDTO = new PaymentResponseDTO(
-                    payment.getId(),
-                    payment.getMethodType(),
-                    payment.getProviderName(),
-                    payment.getAmount(),
-                    payment.getPaymentExpiredAt(),
-                    payment.getStatus(),
-                    payment.getPaidAt()
-            );
-        }
-
-        ShippingResponseDTO shippingDTO = null;
-        ShippingAddress addr = shipping.getShippingAddress();
-
-        ShippingAddressResponseDTO addressDTO = null;
-        if (addr != null) {
-            addressDTO = new ShippingAddressResponseDTO(
-                    addr.getId(),
-                    addr.getCustomer().getId(),
-                    addr.getAddress(),
-                    addr.getCountry(),
-                    addr.getState(),
-                    addr.getCity(),
-                    addr.getPostalCode(),
-                    addr.getIsDefault()
-            );
-        }
-
-        shippingDTO = new ShippingResponseDTO(
-                shipping.getId(),
-                addressDTO,
-                shipping.getCourierName(),
-                shipping.getServiceType(),
-                shipping.getTrackingNumber(),
-                shipping.getShippingCost(),
-                shipping.getStatus(),
-                shipping.getShippedAt(),
-                shipping.getDeliveredAt()
-        );
-
-        OrderResponseDTO orderResponseDTO = new OrderResponseDTO(
-                order.getId(),
-                order.getOrderNumber(),
-                order.getCustomer().getId(),
-                order.getOrderDate(),
-                order.getTotalQuantity(),
-                order.getTotalAmount(),
-                order.getNote(),
-                order.getStatus(),
-                detailsDTO,
-                paymentDTO,
-                shippingDTO
-        );
-
-        ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
-                HttpStatus.CREATED.value(),
-                "Order successfully created",
-                orderResponseDTO
-        );
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ActionSuccessResponseDTO> updateOrder(@PathVariable("id") String id, @Valid @RequestBody AdminUpdateOrderRequestDTO request){
-        Shipping shipping = orderService.updateOrder(id, request);
-
-        Order order = shipping.getOrder();
-
-        List<OrderDetailResponseDTO> detailsDTO = order.getOrderDetails().stream()
-                .map(detail -> new OrderDetailResponseDTO(
-                        detail.getId(),
-                        detail.getProduct().getId(),
-                        detail.getProductName(),
-                        detail.getPrice(),
-                        detail.getQuantity(),
-                        detail.getSubTotal()
-                ))
-                .collect(Collectors.toList());
-
-        PaymentResponseDTO paymentDTO = null;
-        if (order.getPayment() != null) {
-            Payment payment = order.getPayment();
-            paymentDTO = new PaymentResponseDTO(
-                    payment.getId(),
-                    payment.getMethodType(),
-                    payment.getProviderName(),
-                    payment.getAmount(),
-                    payment.getPaymentExpiredAt(),
-                    payment.getStatus(),
-                    payment.getPaidAt()
-            );
-        }
-
-        ShippingResponseDTO shippingDTO = null;
-        ShippingAddress addr = shipping.getShippingAddress();
-
-        ShippingAddressResponseDTO addressDTO = null;
-        if (addr != null) {
-            addressDTO = new ShippingAddressResponseDTO(
-                    addr.getId(),
-                    addr.getCustomer().getId(),
-                    addr.getAddress(),
-                    addr.getCountry(),
-                    addr.getState(),
-                    addr.getCity(),
-                    addr.getPostalCode(),
-                    addr.getIsDefault()
-            );
-        }
-
-        shippingDTO = new ShippingResponseDTO(
-                shipping.getId(),
-                addressDTO,
-                shipping.getCourierName(),
-                shipping.getServiceType(),
-                shipping.getTrackingNumber(),
-                shipping.getShippingCost(),
-                shipping.getStatus(),
-                shipping.getShippedAt(),
-                shipping.getDeliveredAt()
-        );
-
-        OrderResponseDTO orderResponseDTO = new OrderResponseDTO(
-                order.getId(),
-                order.getOrderNumber(),
-                order.getCustomer().getId(),
-                order.getOrderDate(),
-                order.getTotalQuantity(),
-                order.getTotalAmount(),
-                order.getNote(),
-                order.getStatus(),
-                detailsDTO,
-                paymentDTO,
-                shippingDTO
-        );
-
-        ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
-                HttpStatus.OK.value(),
-                "Order successfully updated",
-                orderResponseDTO
-        );
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @PutMapping("/cancel/{id}")
-    public ResponseEntity<ActionSuccessResponseDTO> cancelOrder(@PathVariable("id") String id){
-        Shipping shipping = orderService.cancelOrder(id);
-
-        Order order = shipping.getOrder();
-
-        List<OrderDetailResponseDTO> detailsDTO = order.getOrderDetails().stream()
-                .map(detail -> new OrderDetailResponseDTO(
-                        detail.getId(),
-                        detail.getProduct().getId(),
-                        detail.getProductName(),
-                        detail.getPrice(),
-                        detail.getQuantity(),
-                        detail.getSubTotal()
-                ))
-                .collect(Collectors.toList());
-
-        PaymentResponseDTO paymentDTO = null;
-        if (order.getPayment() != null) {
-            Payment payment = order.getPayment();
-            paymentDTO = new PaymentResponseDTO(
-                    payment.getId(),
-                    payment.getMethodType(),
-                    payment.getProviderName(),
-                    payment.getAmount(),
-                    payment.getPaymentExpiredAt(),
-                    payment.getStatus(),
-                    payment.getPaidAt()
-            );
-        }
-
-        ShippingResponseDTO shippingDTO = null;
-        ShippingAddress addr = shipping.getShippingAddress();
-
-        ShippingAddressResponseDTO addressDTO = null;
-        if (addr != null) {
-            addressDTO = new ShippingAddressResponseDTO(
-                    addr.getId(),
-                    addr.getCustomer().getId(),
-                    addr.getAddress(),
-                    addr.getCountry(),
-                    addr.getState(),
-                    addr.getCity(),
-                    addr.getPostalCode(),
-                    addr.getIsDefault()
-            );
-        }
-
-        shippingDTO = new ShippingResponseDTO(
-                shipping.getId(),
-                addressDTO,
-                shipping.getCourierName(),
-                shipping.getServiceType(),
-                shipping.getTrackingNumber(),
-                shipping.getShippingCost(),
-                shipping.getStatus(),
-                shipping.getShippedAt(),
-                shipping.getDeliveredAt()
-        );
-
-        OrderResponseDTO orderResponseDTO = new OrderResponseDTO(
-                order.getId(),
-                order.getOrderNumber(),
-                order.getCustomer().getId(),
-                order.getOrderDate(),
-                order.getTotalQuantity(),
-                order.getTotalAmount(),
-                order.getNote(),
-                order.getStatus(),
-                detailsDTO,
-                paymentDTO,
-                shippingDTO
-        );
-
-        ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
-                HttpStatus.OK.value(),
-                "Order successfully canceled",
-                orderResponseDTO
-        );
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
 }

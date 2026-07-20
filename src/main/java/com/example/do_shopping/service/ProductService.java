@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -28,6 +29,8 @@ import org.springframework.data.domain.Sort;
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductService productService;
+    private final StorageService storageService;
 
     public Page<Product> getAllProducts(int page, int size, String sortBy, String sortDirection, String categoryId) {
         Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
@@ -70,7 +73,7 @@ public class ProductService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Product updateProduct(String id, UpdateProductRequestDTO request, String imageUrl) {
+    public Product updateProduct(String id, UpdateProductRequestDTO request, MultipartFile file) {
         Product product = productRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new DataNotFoundException("product_id " + id + " not found"));
 
@@ -80,6 +83,17 @@ public class ProductService {
                     .orElseThrow(() -> new DataNotFoundException(
                             "category_id " + request.getCategoryId() + " not available"));
             product.setCategory(category);
+        }
+
+        String imageUrl = null;
+
+        if (file != null && !file.isEmpty()) {
+            Product existingProduct = productService.getProductById(id);
+            if (existingProduct.getImageUrl() != null) {
+                storageService.deleteFile(existingProduct.getImageUrl());
+            }
+
+            imageUrl = storageService.saveProductImage(file);
         }
 
         Optional<Product> checkProductName = productRepository.findByNameAndDeletedAtIsNull(request.getName());
@@ -122,12 +136,4 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @Transactional
-    public Product updateProductImage(String id, String imageUrl) {
-        Product product = productRepository.findByIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new DataNotFoundException("product_id " + id + " not found"));
-        product.setImageUrl(imageUrl);
-        return productRepository.save(product);
-    }
 }

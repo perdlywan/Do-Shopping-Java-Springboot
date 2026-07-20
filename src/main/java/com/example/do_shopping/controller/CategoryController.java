@@ -21,95 +21,91 @@ import java.util.stream.Collectors;
 @RequestMapping("/categories")
 @RequiredArgsConstructor
 public class CategoryController {
-    private final CategoryService categoryService;
+        private final CategoryService categoryService;
 
-    @GetMapping
-    public ResponseEntity<PagedResponseDTO<CategoryResponseDTO>> getAllCatgories(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDirection
-    ){
-        int pageIndex = page > 0 ? page - 1 : 0;
-        Page<Category> categoriesPage = categoryService.getAllCategories(pageIndex, size, sortBy, sortDirection);
+        @GetMapping
+        public ResponseEntity<PagedResponseDTO<CategoryResponseDTO>> getAllCatgories(
+                        @RequestParam(defaultValue = "1") int page,
+                        @RequestParam(defaultValue = "10") int size,
+                        @RequestParam(defaultValue = "id") String sortBy,
+                        @RequestParam(defaultValue = "asc") String sortDirection) {
+                int pageIndex = page > 0 ? page - 1 : 0;
+                Page<Category> categoriesPage = categoryService.getAllCategories(pageIndex, size, sortBy,
+                                sortDirection);
 
-        List<CategoryResponseDTO> categoryResponseDTO = categoriesPage.getContent().stream()
-                .map(category -> new CategoryResponseDTO(
-                        category.getId(),
-                        category.getName()
-                ))
-                .collect(Collectors.toList());
+                List<CategoryResponseDTO> categoryResponseDTO = categoriesPage.getContent().stream()
+                                .map(this::mapToResponseDTO)
+                                .collect(Collectors.toList());
 
-        PagedResponseDTO<CategoryResponseDTO> response = new PagedResponseDTO<>(
-                HttpStatus.OK.value(),
-                categoryResponseDTO,
-                categoriesPage.getNumber() + 1,
-                categoriesPage.getSize(),
-                categoriesPage.getTotalElements(),
-                categoriesPage.getTotalPages(),
-                categoriesPage.isLast()
-        );
+                PagedResponseDTO<CategoryResponseDTO> response = new PagedResponseDTO<>(
+                                HttpStatus.OK.value(),
+                                categoryResponseDTO,
+                                categoriesPage.getNumber() + 1,
+                                categoriesPage.getSize(),
+                                categoriesPage.getTotalElements(),
+                                categoriesPage.getTotalPages(),
+                                categoriesPage.isLast());
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<DataResponseDTO> getCategoryById(@PathVariable("id") String id){
-         Category category = categoryService.getCategoryById(id);
+        @GetMapping("/{id}")
+        public ResponseEntity<DataResponseDTO> getCategoryById(@PathVariable("id") String id) {
+                Category category = categoryService.getCategoryById(id);
 
-         CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO(category.getId(), category.getName());
+                CategoryResponseDTO categoryResponseDTO = mapToResponseDTO(category);
 
-         DataResponseDTO response = new DataResponseDTO(
-                 HttpStatus.OK.value(),
-                 categoryResponseDTO
-         );
+                DataResponseDTO response = new DataResponseDTO(
+                                HttpStatus.OK.value(),
+                                categoryResponseDTO);
 
-         return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
 
-    @PostMapping
-    public ResponseEntity<ActionSuccessResponseDTO> addCategory(@Valid @RequestBody AddCategoryRequestDTO request){
-        Category category =  categoryService.addCategory(request);
+        @PostMapping
+        public ResponseEntity<ActionSuccessResponseDTO> addCategory(@Valid @RequestBody AddCategoryRequestDTO request) {
+                Category category = categoryService.addCategory(request);
 
-        CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO(category.getId(), category.getName());
+                CategoryResponseDTO categoryResponseDTO = mapToResponseDTO(category);
 
-        ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
-                HttpStatus.CREATED.value(),
-                "Category successfully added",
-                categoryResponseDTO
-        );
+                ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
+                                HttpStatus.CREATED.value(),
+                                "Category successfully added",
+                                categoryResponseDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ActionSuccessResponseDTO> updateCategoryName(@PathVariable("id") String id, @Valid @RequestBody AddCategoryRequestDTO request){
-        Category category =  categoryService.updateCategory(id, request);
+        @PutMapping("/{id}")
+        public ResponseEntity<ActionSuccessResponseDTO> updateCategoryName(@PathVariable("id") String id,
+                        @Valid @RequestBody AddCategoryRequestDTO request) {
+                Category category = categoryService.updateCategory(id, request);
 
-        CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO(category.getId(), category.getName());
+                CategoryResponseDTO categoryResponseDTO = mapToResponseDTO(category);
 
-        ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
-                HttpStatus.OK.value(),
-                "Category successfully updated",
-                categoryResponseDTO
-        );
+                ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
+                                HttpStatus.OK.value(),
+                                "Category successfully updated",
+                                categoryResponseDTO);
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ActionSuccessResponseDTO> deleteCategory(@PathVariable("id") String id){
-        Category category = categoryService.deleteCategory(id);
+        @DeleteMapping("/{id}")
+        public ResponseEntity<ActionSuccessResponseDTO> deleteCategory(@PathVariable("id") String id) {
+                Category category = categoryService.deleteCategory(id);
 
-        CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO(category.getId(), category.getName());
+                CategoryResponseDTO categoryResponseDTO = mapToResponseDTO(category);
 
-        ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
-                HttpStatus.OK.value(),
-                "Category successfully deleted",
-                categoryResponseDTO
-        );
+                ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
+                                HttpStatus.OK.value(),
+                                "Category successfully deleted",
+                                categoryResponseDTO);
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
 
+        private CategoryResponseDTO mapToResponseDTO(Category category) {
+                return new CategoryResponseDTO(category.getId(), category.getName());
+        }
 }

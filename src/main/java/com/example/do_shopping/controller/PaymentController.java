@@ -1,7 +1,6 @@
 package com.example.do_shopping.controller;
 
 import com.example.do_shopping.dto.response.ActionSuccessResponseDTO;
-import com.example.do_shopping.dto.response.payment.PaymentResponseDTO;
 import com.example.do_shopping.dto.response.payment.PaymentSuccessResponseDTO;
 import com.example.do_shopping.entity.Payment;
 import com.example.do_shopping.service.PaymentService;
@@ -17,7 +16,7 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PutMapping("/{id}")
-    public ResponseEntity<ActionSuccessResponseDTO> doPayment(@PathVariable("id") String id){
+    public ResponseEntity<ActionSuccessResponseDTO> doPayment(@PathVariable("id") String id) {
         Payment payment = paymentService.doPayment(id);
 
         PaymentSuccessResponseDTO paymentResponseDTO = new PaymentSuccessResponseDTO(
@@ -28,15 +27,13 @@ public class PaymentController {
                 payment.getAmount(),
                 payment.getPaymentExpiredAt(),
                 payment.getStatus(),
-                payment.getPaidAt()
-        );
+                payment.getPaidAt());
 
         ActionSuccessResponseDTO response = new ActionSuccessResponseDTO(
                 HttpStatus.OK.value(),
                 "Payment successful",
-                paymentResponseDTO
-        );
+                paymentResponseDTO);
 
-        return  ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
