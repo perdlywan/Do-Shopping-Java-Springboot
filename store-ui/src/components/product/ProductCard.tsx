@@ -12,6 +12,7 @@ export interface Product {
   price: number;
   stock: number;
   description: string;
+  imageUrl?: string;
 }
 
 interface ProductCardProps {
@@ -29,7 +30,8 @@ export default function ProductCard({ product }: ProductCardProps) {
       name: product.name,
       price: product.price,
       quantity: quantity,
-      maxStock: product.stock
+      maxStock: product.stock,
+      imageUrl: product.imageUrl
     });
     setQuantity(1); // Reset to 1 after adding
   };
@@ -42,9 +44,17 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/products/${product.id}`} className={styles.productCard}>
       <div className={styles.productImageWrapper}>
-        <div className={styles.productImagePlaceholder}>
-          📦
-        </div>
+        {product.imageUrl ? (
+          <img
+            src={`http://localhost:8080${product.imageUrl}`}
+            alt={product.name}
+            className={styles.productImage}
+          />
+        ) : (
+          <div className={styles.productImagePlaceholder}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+          </div>
+        )}
         {product.stock <= 5 && product.stock > 0 && (
           <span className={styles.badgeWarning}>Low Stock</span>
         )}

@@ -201,9 +201,13 @@
 
 .productImageWrapper {
   position: relative;
-  height: 220px;
+  height: 250px;
+  flex-shrink: 0;
   background-color: var(--bg-subtle);
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .productImagePlaceholder {
@@ -218,6 +222,18 @@
 }
 
 .productCard:hover .productImagePlaceholder {
+  transform: scale(1.05);
+}
+
+.productImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 1rem;
+  transition: transform 0.5s ease;
+}
+
+.productCard:hover .productImage {
   transform: scale(1.05);
 }
 

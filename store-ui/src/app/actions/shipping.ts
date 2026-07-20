@@ -7,22 +7,22 @@ const API_BASE_URL = 'http://localhost:8080/shippingaddresses';
 
 async function getAuthHeaders() {
   const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
+  const token = cookieStore.get('store_token')?.value;
   return {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`,
   };
 }
 
-export async function getShippingAddresses() {
+export async function getShippingAddresses(page: number = 1, size: number = 10) {
   try {
-    const res = await fetch(`${API_BASE_URL}?page=1&size=50`, {
+    const res = await fetch(`${API_BASE_URL}?page=${page}&size=${size}`, {
       headers: await getAuthHeaders(),
       cache: 'no-store'
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Failed to fetch addresses');
-    return { data: data.data || [] }; // PagedResponseDTO structure: data contains the list
+    return { data: data.data || [], totalPages: data.totalPages || 1 }; 
   } catch (error: any) {
     return { error: error.message || 'Network error' };
   }

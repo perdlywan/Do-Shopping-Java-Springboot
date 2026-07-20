@@ -13,21 +13,28 @@ interface PagedResponse<T> {
   totalPages: number;
 }
 
-async function getCategories() {
+async function getCategories(page: number) {
   try {
-    const res = await fetch('http://localhost:8080/categories?size=100', {
+    const res = await fetch(`http://localhost:8080/categories?page=${page}&size=12`, {
       next: { revalidate: 3600 } 
     });
-    if (!res.ok) return [];
-    const response = await res.json() as PagedResponse<Category>;
-    return response.data || [];
+    if (!res.ok) return null;
+    return await res.json() as PagedResponse<Category>;
   } catch (error) {
-    return [];
+    return null;
   }
 }
 
-export default async function CategoriesPage() {
-  const categories = await getCategories();
+export default async function CategoriesPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ page?: string }>;
+}) {
+  const resolvedParams = await searchParams;
+  const currentPage = Number(resolvedParams?.page) || 1;
+  const response = await getCategories(currentPage);
+  const categories = response?.data || [];
+  const totalPages = response?.totalPages || 1;
 
   return (
     <div className={styles.pageContainer}>
@@ -49,6 +56,30 @@ export default async function CategoriesPage() {
             </Link>
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className={styles.pagination}>
+            {currentPage > 1 ? (
+              <Link href={`/categories?page=${currentPage - 1}`} className={styles.pageBtn}>
+                Previous
+              </Link>
+            ) : (
+              <button className={styles.pageBtn} disabled>Previous</button>
+            )}
+            
+            <span className={styles.pageInfo}>
+              Page {currentPage} of {totalPages}
+            </span>
+
+            {currentPage < totalPages ? (
+              <Link href={`/categories?page=${currentPage + 1}`} className={styles.pageBtn}>
+                Next
+              </Link>
+            ) : (
+              <button className={styles.pageBtn} disabled>Next</button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

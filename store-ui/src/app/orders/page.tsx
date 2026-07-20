@@ -7,8 +7,14 @@ export const metadata = {
   title: 'My Orders - Do-Shopping',
 };
 
-export default async function OrdersPage() {
-  const res = await getMyOrders(1, 20);
+export default async function OrdersPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ page?: string }>;
+}) {
+  const resolvedParams = await searchParams;
+  const currentPage = Number(resolvedParams?.page) || 1;
+  const res = await getMyOrders(currentPage, 10);
 
   if (res.error) {
     return (
@@ -20,6 +26,7 @@ export default async function OrdersPage() {
   }
 
   const orders = res.data || [];
+  const totalPages = res.meta?.totalPages || 1;
 
   function getStatusClass(status: string) {
     switch (status) {
@@ -51,67 +58,73 @@ export default async function OrdersPage() {
       {orders.length === 0 ? (
         <div className={styles.noOrders}>You haven&apos;t placed any orders yet.</div>
       ) : (
-        <div className={styles.ordersList}>
-          {orders.map((order: any) => {
-            const displayOrderNumber = order.orderNumber || `ORD-${order.id.split('-')[0].toUpperCase()}`;
-            const payment = order.payment;
-            const isPending = order.status === 'PENDING' && payment?.status === 'PENDING' && payment?.methodType !== 'COD';
+        <>
+          <div className={styles.ordersList}>
+            {orders.map((order: any) => {
+              const displayOrderNumber = order.orderNumber || `ORD-${order.id.split('-')[0].toUpperCase()}`;
+              const payment = order.payment;
+              const isPending = order.status === 'PENDING' && payment?.status === 'PENDING' && payment?.methodType !== 'COD';
 
-            return (
-              <div key={order.id} className={styles.orderCard}>
-                <div className={styles.orderHeader}>
-                  <div>
-                    <div className={styles.orderId}>Order #{displayOrderNumber}</div>
-                    <div className={styles.orderDate}>
-                      {new Date(order.orderDate).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
+              return (
+                <div key={order.id} className={styles.orderCard}>
+                  <div className={styles.orderHeader}>
+                    <div className={styles.orderIdGroup}>
+                      <span className={styles.orderLabel}>Order Number</span>
+                      <span className={styles.orderIdValue}>{displayOrderNumber}</span>
+                    </div>
+                    <div className={styles.orderDateGroup}>
+                      <span className={styles.orderLabel}>Order Date</span>
+                      <span className={styles.orderDateValue}>
+                        {new Date(order.orderDate).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </span>
+                    </div>
+                    <div className={styles.orderStatusGroup}>
+                      <span className={`${styles.statusBadge} ${getStatusClass(order.status)}`}>
+                        {order.status}
+                      </span>
                     </div>
                   </div>
-                  <div className={`${styles.orderStatus} ${getStatusClass(order.status)}`}>
-                    {order.status}
-                  </div>
-                </div>
 
-                <div className={styles.orderBody}>
-                  <div className={styles.orderDetails}>
-                    <ul className={styles.itemList}>
-                      {(order.orderDetail || []).map((item: any) => (
-                        <li key={item.id} className={styles.item}>
+                  <div className={styles.orderItems}>
+                    {order.items?.map((item: any) => (
+                      <div key={item.id} className={styles.orderItem}>
+                        <div className={styles.itemInfo}>
                           <span className={styles.itemName}>{item.productName}</span>
-                          <span className={styles.itemQty}>x {item.quantity}</span>
-                        </li>
-                      ))}
-                    </ul>
+                          <span className={styles.itemMeta}>Qty: {item.quantity}</span>
+                        </div>
+                        <span className={styles.itemPrice}>
+                          Rp {item.subTotal.toLocaleString('id-ID')}
+                        </span>
+                      </div>
+                    ))}
                   </div>
 
-                  <div className={styles.orderSummary}>
-                    <div className={styles.totalLabel}>Total Amount</div>
-                    <div className={styles.totalAmount}>
-                      {new Intl.NumberFormat('id-ID', {
-                        style: 'currency', currency: 'IDR', maximumFractionDigits: 0
-                      }).format(order.totalAmount)}
+                  <div className={styles.orderFooter}>
+                    <div className={styles.footerRow}>
+                      <span className={styles.footerLabel}>Total Quantity</span>
+                      <span className={styles.footerValue}>{order.totalQuantity} items</span>
+                    </div>
+                    <div className={styles.footerRow}>
+                      <span className={styles.footerLabel}>Total Amount</span>
+                      <span className={styles.footerTotal}>Rp {order.totalAmount.toLocaleString('id-ID')}</span>
                     </div>
                   </div>
-                </div>
-
-                {/* Payment Section */}
-                {payment && (
-                  <div className={styles.paymentSection}>
-                    <div className={styles.paymentInfo}>
+                  
+                  {payment && (
+                    <div className={styles.paymentSection}>
+                      <h4 className={styles.paymentTitle}>Payment Details</h4>
                       <div className={styles.paymentRow}>
-                        <span className={styles.paymentLabel}>Payment Method</span>
+                        <span className={styles.paymentLabel}>Method</span>
                         <span className={styles.paymentValue}>
-                          {payment.methodType?.replace('_', ' ')}
-                          {payment.providerName && ` — ${payment.providerName}`}
+                          {payment.methodType} {payment.providerName ? `(${payment.providerName})` : ''}
                         </span>
                       </div>
                       <div className={styles.paymentRow}>
-                        <span className={styles.paymentLabel}>Payment Status</span>
+                        <span className={styles.paymentLabel}>Status</span>
                         <span className={`${styles.paymentBadge} ${getPaymentStatusClass(payment.status)}`}>
                           {payment.status}
                         </span>
@@ -138,19 +151,42 @@ export default async function OrdersPage() {
                           </span>
                         </div>
                       )}
+                      {isPending && (
+                        <div className={styles.payAction}>
+                          <PayNowButton orderId={order.id} amount={order.totalAmount} />
+                        </div>
+                      )}
                     </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
 
-                    {isPending && (
-                      <div className={styles.payAction}>
-                        <PayNowButton orderId={order.id} amount={order.totalAmount} />
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+          {totalPages > 1 && (
+            <div className={styles.pagination}>
+              {currentPage > 1 ? (
+                <a href={`/orders?page=${currentPage - 1}`} className={styles.pageBtn}>
+                  Previous
+                </a>
+              ) : (
+                <button className={styles.pageBtn} disabled>Previous</button>
+              )}
+              
+              <span className={styles.pageInfo}>
+                Page {currentPage} of {totalPages}
+              </span>
+
+              {currentPage < totalPages ? (
+                <a href={`/orders?page=${currentPage + 1}`} className={styles.pageBtn}>
+                  Next
+                </a>
+              ) : (
+                <button className={styles.pageBtn} disabled>Next</button>
+              )}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

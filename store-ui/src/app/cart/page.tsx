@@ -6,7 +6,7 @@ import CartView from './CartView';
 
 export default async function CartPage() {
   const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
+  const token = cookieStore.get('store_token')?.value;
   const isAuthenticated = !!token;
 
   let addresses = [];

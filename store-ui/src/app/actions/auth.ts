@@ -25,12 +25,12 @@ export async function loginAction(prevState: any, formData: FormData) {
     }
 
     if (data.role !== 'CUSTOMER') {
-      return { error: 'Login failed. Please check your credentials.' };
+      return { error: 'Admin accounts cannot sign in here. Please use the admin portal.' };
     }
 
     if (data.token) {
       const cookieStore = await cookies();
-      cookieStore.set('token', data.token, {
+      cookieStore.set('store_token', data.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -80,6 +80,6 @@ export async function registerAction(prevState: any, formData: FormData) {
 
 export async function logoutAction() {
   const cookieStore = await cookies();
-  cookieStore.delete('token');
+  cookieStore.delete('store_token');
   redirect('/');
 }

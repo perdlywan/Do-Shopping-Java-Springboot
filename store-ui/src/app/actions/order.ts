@@ -6,7 +6,7 @@ const API_BASE_URL = 'http://localhost:8080/orders';
 
 async function getAuthHeaders() {
   const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
+  const token = cookieStore.get('store_token')?.value;
   return {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`,

@@ -7,7 +7,7 @@ import LogoutButton from './LogoutButton';
 
 export default async function Navbar() {
   const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
+  const token = cookieStore.get('store_token')?.value;
 
   return (
     <header className={styles.header}>

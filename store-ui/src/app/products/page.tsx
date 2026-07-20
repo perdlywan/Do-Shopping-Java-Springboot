@@ -9,6 +9,7 @@ interface Product {
   price: number;
   stock: number;
   description: string;
+  imageUrl?: string;
 }
 
 interface PagedResponse<T> {
